@@ -3,7 +3,7 @@
     --base: #F0F7F4;
     --base2: #B3BFB8;
     --base3: #301014;
-    --secondary: #0081AF;
+    --secondary: #59656F;
     --accent: #A2E3C4;
 }
 
@@ -178,7 +178,7 @@ fieldset {
 
 /* admindashboard */
 .adminfilter {
-    justify-items: center;
+    justify-items: flex-start;
     display: grid;
     gap: 1em;
     grid-template-columns: 1fr; 
