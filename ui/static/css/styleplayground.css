@@ -1,0 +1,294 @@
+:root {
+    box-sizing: border-box;
+    --base: #F0F7F4;
+    --base2: #B3BFB8;
+    --base3: #301014;
+    --secondary: #0081AF;
+    --accent: #A2E3C4;
+}
+
+html {
+    font-size: 100%;
+}
+
+body {
+    font-family: 'Roboto', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--base);
+    color: var(--base3);
+   
+}
+
+
+main {
+    margin: 2em auto;
+    text-align: center;
+    overflow: scroll;
+}
+/* NAVBAR*/
+header, nav {
+    width: 100%;
+    height: max-content;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: var(--secondary);
+    color: var(--base)
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: max-content;
+    justify-content: center;
+}
+
+nav li {
+    font-size: 1.4em;
+    margin: 0 1em;
+    padding: 0.5em 1em; 
+}
+
+nav a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Make the inputs not so weird*/
+button,
+input[type="submit"],
+textarea,
+select,
+input:not([type="checkbox"]) {
+    font: inherit;
+    letter-spacing: inherit;
+    word-spacing: inherit;
+    border: 0.1em solid;
+    padding: 0.2em 0.4em;
+    border-radius: 0.3em;
+    background-color: var(--base);
+    width: max-content;
+}
+
+button,
+input[type="submit"] {
+    background-color: var(--accent)
+}
+
+/* LAYOUTS */
+/* login screen */
+.login {
+    display: grid;
+    row-gap: 1em;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "username"
+        "password"
+        "submit";
+}
+
+.login > div {
+    width: max-content;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+
+.login > * {
+    justify-self: center;
+    align-self: center;
+}
+
+.username {
+    grid-area: username;
+}
+
+.password {
+    grid-area: password;
+}
+
+.submit {
+    grid-area: submit;
+}
+
+fieldset {
+    border: none;
+    
+}
+
+/* Progress Note */
+.userdata {
+    display: grid;
+    gap: 1em;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "patient service"
+        "date date"
+        "starttime endtime"
+        ;
+}
+
+.patient {
+    grid-area: patient;
+}
+
+.service {
+    grid-area: service;
+}
+
+.date {
+    grid-area: date;
+}
+
+.starttime {
+    grid-area: starttime;
+}
+
+.endtime {
+    grid-area: endtime;
+}
+
+.userdata > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+}
+/* Note */
+.note {
+    display: grid;
+    gap: 1em;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+.note > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+
+/* admindashboard */
+.adminfilter {
+    justify-items: center;
+    display: grid;
+    gap: 1em;
+    grid-template-columns: 1fr; 
+    grid-template-areas: 
+        "patientname"
+        "providername"
+        "servicedate"
+        "servicetime"
+        "servicetype"
+        "clear"
+        ;
+}
+
+.clear {
+    grid-area: clear;
+}
+.patientname {
+    grid-area: patientname;
+}
+
+.servicedate {
+    grid-area: servicedate;
+}
+
+.providername {
+    grid-area: providername;
+}
+
+.servicetime {
+    grid-area: servicetime;
+}
+
+.servicetype {
+    grid-area: servicetype;
+}
+
+.adminfilter > div, .adminfilter > button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+}
+
+.providerfilter {
+    justify-items: center;
+    display: grid;
+    gap: 1em;
+    grid-template-columns: 1fr; 
+    grid-template-areas: 
+        "patientname"
+        "servicedate"
+        "servicetime"
+        "servicetype"
+        "clear"
+        ;
+}
+
+.providerfilter > div, .providerfilter > button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+}
+/* basic container styling */
+
+form, .adminfilter, .providerfilter {
+    background-color: var(--base2);
+    border-radius: 0.3em;
+    padding: 0.5em 0.5em;
+    margin: 1em auto;
+    width: 600px;
+    
+}
+
+h1 {
+    padding: 0;
+    margin: 0.2em;
+}
+
+legend {
+    color: var(--secondary);
+    font-size: 1.4em;
+}
+
+
+
+
+/* table */
+table {
+    border-collapse: collapse;
+    margin: 1em auto;
+    
+}
+
+thead th{
+    background-color: var(--secondary);
+    color: var(--base);
+}
+td,
+th {
+    padding: 0.25em 0.5em;
+    vertical-align: text-top;
+    text-align: left;
+}
+tr:nth-child(even) {
+    background-color: var(--base2);
+}
+
+tr:nth-child(odd) {
+    background-color: var(--base);
+}

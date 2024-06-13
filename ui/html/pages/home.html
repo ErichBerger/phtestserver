@@ -1,0 +1,34 @@
+{{define "title"}}Home{{end}}
+
+{{define "main"}}
+    <h1>Login</h1>
+    <form action="/providerdashboard" method="get">
+        <fieldset class="login">
+            <legend>User Login</legend>
+            <div class="username">
+                <label for="user">Username: </label>
+                <input type="text" id="user">
+            </div>
+            <div class="password">
+                <label for="pass">Password: </label>
+                <input type="text" id="pass">
+            </div>
+            <input type="submit" value="Login" class="submit">
+        </fieldset>
+    </form>
+    <form action="/admindashboard" method="get">
+        <fieldset class="login">
+            <legend>Admin Login</legend>
+            <div class="username">
+                <label for="auser">Username: </label>
+                <input type="text" id="auser" >
+            </div>
+            <div class="password">
+                <label for="apass">Password: </label>
+                <input type="text" id="apass" >
+            </div>
+            <input type="submit" value="Login">
+        </fieldset>
+    </form>
+
+{{end}}
