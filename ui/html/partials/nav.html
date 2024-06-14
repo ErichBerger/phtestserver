@@ -1,9 +1,9 @@
 {{define "nav"}}
 <nav>
   <ul>
-    <li><a href="progressnote">Notes</a></li>
-    <li><a href="home">Home</a></li>
-    <li><a href="providerdashboard">Account</a></li>
+    <a class="{{block "note" .}}{{end}}" href="progressnote"><li>Notes</li></a>
+    <a class="{{block "home" .}}{{end}}" href="home"><li>Home</li></a>
+    <a class="{{block "account" .}}{{end}}" href="providerdashboard"><li>Account</li></a>
   </ul> 
 </nav>
 {{end}}

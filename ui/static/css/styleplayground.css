@@ -35,7 +35,7 @@ header, nav {
 
 nav {
     background-color: var(--secondary);
-    color: var(--base)
+    color: var(--base);
 }
 
 nav ul {
@@ -52,12 +52,29 @@ nav ul {
 nav li {
     font-size: 1.4em;
     margin: 0 1em;
-    padding: 0.5em 1em; 
+    padding: 0.5em 1em;
+    color: var(--base); 
 }
 
 nav a {
     text-decoration: none;
-    color: inherit;
+}
+
+nav a:hover {
+    text-decoration: none;
+    background-color: var(--base2);
+}
+
+nav a:hover * {
+    color: var(--base3);
+}
+
+.highlighted {
+    background-color: var(--base2);
+}
+
+.highlighted * {
+    color: var(--base3);
 }
 
 /* Make the inputs not so weird*/
