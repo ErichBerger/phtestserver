@@ -1,4 +1,5 @@
-    {{define "title"}}Provider Dashboard{{end}}
+{{define "title"}}Provider Dashboard{{end}}
+{{define "note"}}highlighted{{end}}
     
     <!-- https://www.w3schools.com/howto/howto_js_filter_table.asp -->
     <!-- https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_filter_table -->
@@ -8,117 +9,123 @@
 <button type="button"><a href="/index.html">Logout</a></button><br><br>
 
 <h2>Filter My Progress Notes:</h2>
-
-<div class="providerfilter">
-    <div class="patientname">
-        <label for="patientfname">First Name: </label> <input type="text" id="patientfname" onkeyup="filterTable()">
-        
-        <label for="patientlname">Last Name: </label><input type="text" id="patientlname" onkeyup="filterTable()">
-    </div>
-    <div class="servicedate">
-        <label>Between dates</label> 
-        <input type="date" id="servicedatestart" onchange="filterTable()"><label> and </label>
-        <input type="date" id="servicedateend" onchange="filterTable()"> 
-    </div> 
-    <div class="servicetime">
-        <label>Between times</label> 
-        <input type="time" id="servicetimestart" onchange="filterTable()"><label> and </label>
-        <input type="time" id="servicetimeend" onchange="filterTable()"> 
-    </div>
-    <div class="servicetype">
-        <label>Type of Service:</label> 
-        <select id="servicetype" onchange="filterTable()">
-            <option value="service1">Service1</option>
-            <option value="service2">Service2</option>
-            <option value="service3">Service3</option>
-            <option value="service4">Service4</option>
-        </select> 
-    </div> 
-    <button class="clear" onclick="clearFilters()">Clear Filters</button>
+    <div class="notes">
+    <ul class="notes-filter">
+        <li>
+            <label for="patientfname">First Name: </label> 
+            <input type="text" id="patientfname" onkeyup="filterTable()">
+        </li>
+        <li>
+            <label for="patientlname">Last Name: </label>
+            <input type="text" id="patientlname" onkeyup="filterTable()">
+        </li>
+        <li>
+            <label for="servicedatestart">Between dates:</label> 
+            <input type="date" id="servicedatestart" onchange="filterTable()">
+            <label for="servicedateend"> and </label>
+            <input type="date" id="servicedateend" onchange="filterTable()"> 
+        </li> 
+        <li>
+            <label for="servicetimestart">Between times:</label> 
+            <input type="time" id="servicetimestart" onchange="filterTable()">
+            <label for="servicetimeend"> and </label>
+            <input type="time" id="servicetimeend" onchange="filterTable()"> 
+        </li>
+        <li>
+            <label for="servicetype">Type of Service:</label> 
+            <select id="servicetype" onchange="filterTable()">
+                <option value="service1">Service1</option>
+                <option value="service2">Service2</option>
+                <option value="service3">Service3</option>
+                <option value="service4">Service4</option>
+            </select> 
+        </li> 
+        <button class="clear" onclick="clearFilters()">Clear Filters</button>
+    </ul>
+    <table class="notes-notes" id="myTable">
+        <thead>
+            <tr class="header">
+                <th>NoteID</th>
+                <th>Patient FName</th>
+                <th>Patient LName</th>
+                <th>Service Date</th>
+                <th>Service Type</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Last Saved</th>
+                <th>Approved?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="progressnote">0000005</a></td>
+                <td>PatientFName5</td>
+                <td>PatientLName5</td>
+                <td>05/17/2024</td>
+                <td>Service1</td>
+                <td>09:00 AM</td>
+                <td>11:00 AM</td>
+                <td>11:30 AM 05/17/2024</td>
+                <td>NO</td>
+            </tr>
+            <tr>
+                <td><a href="progressnote">0000009</a></td>
+                <td>PatientFName4</td>
+                <td>PatientLName4</td>
+                <td>05/19/2024</td>
+                <td>Service1</td>
+                <td>10:00 AM</td>
+                <td>12:00 PM</td>
+                <td>12:30 PM 05/19/2024</td>
+                <td>YES</td>
+            </tr>
+            <tr>
+                <td><a href="progressnote">0000013</a></td>
+                <td>PatientFName3</td>
+                <td>PatientLName3</td>
+                <td>05/21/2024</td>
+                <td>Service1</td>
+                <td>09:30 AM</td>
+                <td>11:30 AM</td>
+                <td>12:00 PM 05/21/2024</td>
+                <td>YES</td>
+            </tr>
+            <tr>
+                <td><a href="progressnote">0000017</a></td>
+                <td>PatientFName2</td>
+                <td>PatientLName2</td>
+                <td>05/23/2024</td>
+                <td>Service1</td>
+                <td>08:00 AM</td>
+                <td>10:00 AM</td>
+                <td>10:30 AM 05/23/2024</td>
+                <td>PENDING</td>
+            </tr>
+            <tr>
+                <td><a href="progressnote">0000021</a></td>
+                <td>PatientFName1</td>
+                <td>PatientLName1</td>
+                <td>05/25/2024</td>
+                <td>Service1</td>
+                <td>09:00 AM</td>
+                <td>11:00 AM</td>
+                <td>11:30 AM 05/25/2024</td>
+                <td>YES</td>
+            </tr>
+            <tr>
+                <td><a href="progressnote">0000029</a></td>
+                <td>PatientFName4</td>
+                <td>PatientLName4</td>
+                <td>05/29/2024</td>
+                <td>Service1</td>
+                <td>10:00 AM</td>
+                <td>12:00 PM</td>
+                <td>12:30 PM 05/29/2024</td>
+                <td>YES</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
-<table id="myTable">
-    <thead>
-        <tr class="header">
-            <th>NoteID</th>
-            <th>Patient FName</th>
-            <th>Patient LName</th>
-            <th>Service Date</th>
-            <th>Service Type</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Last Saved</th>
-            <th>Approved?</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><a href="progressnote">0000005</a></td>
-            <td>PatientFName5</td>
-            <td>PatientLName5</td>
-            <td>05/17/2024</td>
-            <td>Service1</td>
-            <td>09:00 AM</td>
-            <td>11:00 AM</td>
-            <td>11:30 AM 05/17/2024</td>
-            <td>NO</td>
-        </tr>
-        <tr>
-            <td><a href="progressnote">0000009</a></td>
-            <td>PatientFName4</td>
-            <td>PatientLName4</td>
-            <td>05/19/2024</td>
-            <td>Service1</td>
-            <td>10:00 AM</td>
-            <td>12:00 PM</td>
-            <td>12:30 PM 05/19/2024</td>
-            <td>YES</td>
-        </tr>
-        <tr>
-            <td><a href="progressnote">0000013</a></td>
-            <td>PatientFName3</td>
-            <td>PatientLName3</td>
-            <td>05/21/2024</td>
-            <td>Service1</td>
-            <td>09:30 AM</td>
-            <td>11:30 AM</td>
-            <td>12:00 PM 05/21/2024</td>
-            <td>YES</td>
-        </tr>
-        <tr>
-            <td><a href="progressnote">0000017</a></td>
-            <td>PatientFName2</td>
-            <td>PatientLName2</td>
-            <td>05/23/2024</td>
-            <td>Service1</td>
-            <td>08:00 AM</td>
-            <td>10:00 AM</td>
-            <td>10:30 AM 05/23/2024</td>
-            <td>PENDING</td>
-        </tr>
-        <tr>
-            <td><a href="progressnote">0000021</a></td>
-            <td>PatientFName1</td>
-            <td>PatientLName1</td>
-            <td>05/25/2024</td>
-            <td>Service1</td>
-            <td>09:00 AM</td>
-            <td>11:00 AM</td>
-            <td>11:30 AM 05/25/2024</td>
-            <td>YES</td>
-        </tr>
-        <tr>
-            <td><a href="progressnote">0000029</a></td>
-            <td>PatientFName4</td>
-            <td>PatientLName4</td>
-            <td>05/29/2024</td>
-            <td>Service1</td>
-            <td>10:00 AM</td>
-            <td>12:00 PM</td>
-            <td>12:30 PM 05/29/2024</td>
-            <td>YES</td>
-        </tr>
-    </tbody>
-</table>
 
 <script>
 document.getElementById("servicetype").selectedIndex = -1;

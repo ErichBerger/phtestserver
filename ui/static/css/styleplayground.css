@@ -199,7 +199,7 @@ textarea {
 
 /*Admin Notes */
 
-.adminnotes {
+.notes {
     margin: 1em auto;
     width: max-content;
     display: flex;
@@ -210,7 +210,7 @@ textarea {
     padding: 2em;
 }
 
-.adminnotes-filter {
+.notes-filter {
     width: max-content;
     height: max-content;
     display: flex;
@@ -223,19 +223,19 @@ textarea {
     border-right: solid 0.1em var(--secondary);
 }
 
-.adminnotes-filter > li {
+.notes-filter > li {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5em; 
 }
 
-.adminnotes-notes {
+.notes-notes {
     width: max-content;
 }
 
 /* admindashboard */
-.adminfilter {
+.filter {
     justify-items: flex-start;
     display: grid;
     gap: 1em;
