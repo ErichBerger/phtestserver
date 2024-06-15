@@ -1,454 +1,464 @@
     {{define "title"}}Admin Dashboard{{end}}
+    {{define "note"}}highlighted{{end}}
     {{define "main"}}
         <h1>Admin Dashboard:</h1>
         <h2>Welcome back, AdminFName1 AdminLName1</h2>
         <button type="button"><a href="index.html">Logout</a></button><br><br>
 
         <h2>Filter Progress Notes:</h2>
-        <div class="adminfilter">
-            <div class="patientname">
-                Patient: 
-                <label for="patientfname">First Name: </label> <input type="text" id="patientfname" onkeyup="filterTable()">
-                
-                <label for="patientlname">Last Name: </label><input type="text" id="patientlname" onkeyup="filterTable()">
-            </div>
-            <div class="providername">
-                <label for="providerfname">Provider First Name: </label> <input type="text" id="providerfname" onkeyup="filterTable()">
-                
-                <label for="providerlname">Provider Last Name: </label><input type="text" id="providerlname" onkeyup="filterTable()">
-            </div>
-            <div class="servicedate">
-                <label>Between dates</label> 
-                <input type="date" id="servicedatestart" onchange="filterTable()"><label> and </label>
-                <input type="date" id="servicedateend" onchange="filterTable()"> 
-            </div> 
-            <div class="servicetime">
-                <label>Between times </label> 
-                <input type="time" id="servicetimestart" onchange="filterTable()"><label> and </label>
-                <input type="time" id="servicetimeend" onchange="filterTable()"> 
-            </div>
-            <div class="servicetype">
-                <label>Type of Service:</label> 
-                <select id="servicetype" onchange="filterTable()">
-                    <option value="service1">Service1</option>
-                    <option value="service2">Service2</option>
-                    <option value="service3">Service3</option>
-                    <option value="service4">Service4</option>
-                </select> 
-            </div> 
-            <button class="clear" onclick="clearFilters()">Clear Filters</button>
-        </div>
-        <table id="myTable">
-            <thead>
-                <tr>
-                    <th>Note ID</th>
-                    <th>Patient FName</th>
-                    <th>Patient LName</th>
-                    <th>Provider FName</th>
-                    <th>Provider LName</th>
-                    <th>Service Date</th>
-                    <th>Service Type</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Last Saved</th>
-                    <th>Approved?</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><a href="adminnoteview">0000001</a></td>
-                    <td>PatientFName1</td>
-                    <td>PatientLName1</td>
-                    <td>ProviderFName1</td>
-                    <td>ProviderLName1</td>
-                    <td>05/15/2024</td>
-                    <td>Service1</td>
-                    <td>08:00 AM</td>
-                    <td>10:00 AM</td>
-                    <td>10:30 AM 05/15/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000002</a></td>
-                    <td>PatientFName2</td>
-                    <td>PatientLName2</td>
-                    <td>ProviderFName2</td>
-                    <td>ProviderLName2</td>
-                    <td>05/15/2024</td>
-                    <td>Service2</td>
-                    <td>10:30 AM</td>
-                    <td>01:30 PM</td>
-                    <td>02:00 PM 05/15/2024</td>
-                    <td>NO</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000003</a></td>
-                    <td>PatientFName3</td>
-                    <td>PatientLName3</td>
-                    <td>ProviderFName3</td>
-                    <td>ProviderLName3</td>
-                    <td>05/16/2024</td>
-                    <td>Service3</td>
-                    <td>09:00 AM</td>
-                    <td>11:00 AM</td>
-                    <td>11:30 AM 05/16/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000004</a></td>
-                    <td>PatientFName4</td>
-                    <td>PatientLName4</td>
-                    <td>ProviderFName4</td>
-                    <td>ProviderLName4</td>
-                    <td>05/16/2024</td>
-                    <td>Service4</td>
-                    <td>01:00 PM</td>
-                    <td>03:00 PM</td>
-                    <td>03:30 PM 05/16/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000005</a></td>
-                    <td>PatientFName5</td>
-                    <td>PatientLName5</td>
-                    <td>ProviderFName5</td>
-                    <td>ProviderLName5</td>
-                    <td>05/17/2024</td>
-                    <td>Service1</td>
-                    <td>09:00 AM</td>
-                    <td>11:00 AM</td>
-                    <td>11:30 AM 05/17/2024</td>
-                    <td>NO</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000006</a></td>
-                    <td>PatientFName1</td>
-                    <td>PatientLName1</td>
-                    <td>ProviderFName2</td>
-                    <td>ProviderLName2</td>
-                    <td>05/17/2024</td>
-                    <td>Service2</td>
-                    <td>11:30 AM</td>
-                    <td>01:30 PM</td>
-                    <td>02:00 PM 05/17/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000007</a></td>
-                    <td>PatientFName2</td>
-                    <td>PatientLName2</td>
-                    <td>ProviderFName3</td>
-                    <td>ProviderLName3</td>
-                    <td>05/18/2024</td>
-                    <td>Service3</td>
-                    <td>09:30 AM</td>
-                    <td>11:30 AM</td>
-                    <td>12:00 PM 05/18/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000008</a></td>
-                    <td>PatientFName3</td>
-                    <td>PatientLName3</td>
-                    <td>ProviderFName4</td>
-                    <td>ProviderLName4</td>
-                    <td>05/18/2024</td>
-                    <td>Service4</td>
-                    <td>01:30 PM</td>
-                    <td>03:30 PM</td>
-                    <td>04:00 PM 05/18/2024</td>
-                    <td>NO</td>
-                </tr>
-                <!-- Continue with the remaining rows -->
-                <tr>
-                    <td><a href="adminnoteview">0000009</a></td>
-                    <td>PatientFName4</td>
-                    <td>PatientLName4</td>
-                    <td>ProviderFName5</td>
-                    <td>ProviderLName5</td>
-                    <td>05/19/2024</td>
-                    <td>Service1</td>
-                    <td>10:00 AM</td>
-                    <td>12:00 PM</td>
-                    <td>12:30 PM 05/19/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000010</a></td>
-                    <td>PatientFName5</td>
-                    <td>PatientLName5</td>
-                    <td>ProviderFName1</td>
-                    <td>ProviderLName1</td>
-                    <td>05/19/2024</td>
-                    <td>Service2</td>
-                    <td>01:00 PM</td>
-                    <td>03:00 PM</td>
-                    <td>03:30 PM 05/19/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000011</a></td>
-                    <td>PatientFName1</td>
-                    <td>PatientLName1</td>
-                    <td>ProviderFName3</td>
-                    <td>ProviderLName3</td>
-                    <td>05/20/2024</td>
-                    <td>Service3</td>
-                    <td>08:30 AM</td>
-                    <td>10:30 AM</td>
-                    <td>11:00 AM 05/20/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000012</a></td>
-                    <td>PatientFName2</td>
-                    <td>PatientLName2</td>
-                    <td>ProviderFName4</td>
-                    <td>ProviderLName4</td>
-                    <td>05/20/2024</td>
-                    <td>Service4</td>
-                    <td>11:00 AM</td>
-                    <td>01:00 PM</td>
-                    <td>01:30 PM 05/20/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000013</a></td>
-                    <td>PatientFName3</td>
-                    <td>PatientLName3</td>
-                    <td>ProviderFName5</td>
-                    <td>ProviderLName5</td>
-                    <td>05/21/2024</td>
-                    <td>Service1</td>
-                    <td>09:30 AM</td>
-                    <td>11:30 AM</td>
-                    <td>12:00 PM 05/21/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000014</a></td>
-                    <td>PatientFName4</td>
-                    <td>PatientLName4</td>
-                    <td>ProviderFName1</td>
-                    <td>ProviderLName1</td>
-                    <td>05/21/2024</td>
-                    <td>Service2</td>
-                    <td>01:00 PM</td>
-                    <td>03:00 PM</td>
-                    <td>03:30 PM 05/21/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000015</a></td>
-                    <td>PatientFName5</td>
-                    <td>PatientLName5</td>
-                    <td>ProviderFName2</td>
-                    <td>ProviderLName2</td>
-                    <td>05/22/2024</td>
-                    <td>Service3</td>
-                    <td>10:00 AM</td>
-                    <td>12:00 PM</td>
-                    <td>12:30 PM 05/22/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000016</a></td>
-                    <td>PatientFName1</td>
-                    <td>PatientLName1</td>
-                    <td>ProviderFName4</td>
-                    <td>ProviderLName4</td>
-                    <td>05/22/2024</td>
-                    <td>Service4</td>
-                    <td>01:30 PM</td>
-                    <td>03:30 PM</td>
-                    <td>04:00 PM 05/22/2024</td>
-                    <td>NO</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000017</a></td>
-                    <td>PatientFName2</td>
-                    <td>PatientLName2</td>
-                    <td>ProviderFName5</td>
-                    <td>ProviderLName5</td>
-                    <td>05/23/2024</td>
-                    <td>Service1</td>
-                    <td>08:00 AM</td>
-                    <td>10:00 AM</td>
-                    <td>10:30 AM 05/23/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000018</a></td>
-                    <td>PatientFName3</td>
-                    <td>PatientLName3</td>
-                    <td>ProviderFName1</td>
-                    <td>ProviderLName1</td>
-                    <td>05/23/2024</td>
-                    <td>Service2</td>
-                    <td>10:30 AM</td>
-                    <td>12:30 PM</td>
-                    <td>01:00 PM 05/23/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000019</a></td>
-                    <td>PatientFName4</td>
-                    <td>PatientLName4</td>
-                    <td>ProviderFName2</td>
-                    <td>ProviderLName2</td>
-                    <td>05/24/2024</td>
-                    <td>Service3</td>
-                    <td>11:00 AM</td>
-                    <td>01:00 PM</td>
-                    <td>01:30 PM 05/24/2024</td>
-                    <td>NO</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000020</a></td>
-                    <td>PatientFName5</td>
-                    <td>PatientLName5</td>
-                    <td>ProviderFName3</td>
-                    <td>ProviderLName3</td>
-                    <td>05/24/2024</td>
-                    <td>Service4</td>
-                    <td>01:30 PM</td>
-                    <td>03:30 PM</td>
-                    <td>04:00 PM 05/24/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000021</a></td>
-                    <td>PatientFName1</td>
-                    <td>PatientLName1</td>
-                    <td>ProviderFName5</td>
-                    <td>ProviderLName5</td>
-                    <td>05/25/2024</td>
-                    <td>Service1</td>
-                    <td>09:00 AM</td>
-                    <td>11:00 AM</td>
-                    <td>11:30 AM 05/25/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000022</a></td>
-                    <td>PatientFName2</td>
-                    <td>PatientLName2</td>
-                    <td>ProviderFName1</td>
-                    <td>ProviderLName1</td>
-                    <td>05/25/2024</td>
-                    <td>Service2</td>
-                    <td>11:30 AM</td>
-                    <td>01:30 PM</td>
-                    <td>02:00 PM 05/25/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000023</a></td>
-                    <td>PatientFName3</td>
-                    <td>PatientLName3</td>
-                    <td>ProviderFName2</td>
-                    <td>ProviderLName2</td>
-                    <td>05/26/2024</td>
-                    <td>Service3</td>
-                    <td>09:30 AM</td>
-                    <td>11:30 AM</td>
-                    <td>12:00 PM 05/26/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000024</a></td>
-                    <td>PatientFName4</td>
-                    <td>PatientLName4</td>
-                    <td>ProviderFName3</td>
-                    <td>ProviderLName3</td>
-                    <td>05/26/2024</td>
-                    <td>Service4</td>
-                    <td>01:00 PM</td>
-                    <td>03:00 PM</td>
-                    <td>03:30 PM 05/26/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000025</a></td>
-                    <td>PatientFName5</td>
-                    <td>PatientLName5</td>
-                    <td>ProviderFName4</td>
-                    <td>ProviderLName4</td>
-                    <td>05/27/2024</td>
-                    <td>Service1</td>
-                    <td>10:00 AM</td>
-                    <td>12:00 PM</td>
-                    <td>12:30 PM 05/27/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000026</a></td>
-                    <td>PatientFName1</td>
-                    <td>PatientLName1</td>
-                    <td>ProviderFName2</td>
-                    <td>ProviderLName2</td>
-                    <td>05/27/2024</td>
-                    <td>Service2</td>
-                    <td>01:30 PM</td>
-                    <td>03:30 PM</td>
-                    <td>04:00 PM 05/27/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000027</a></td>
-                    <td>PatientFName2</td>
-                    <td>PatientLName2</td>
-                    <td>ProviderFName3</td>
-                    <td>ProviderLName3</td>
-                    <td>05/28/2024</td>
-                    <td>Service3</td>
-                    <td>09:00 AM</td>
-                    <td>11:00 AM</td>
-                    <td>11:30 AM 05/28/2024</td>
-                    <td>PENDING</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000028</a></td>
-                    <td>PatientFName3</td>
-                    <td>PatientLName3</td>
-                    <td>ProviderFName4</td>
-                    <td>ProviderLName4</td>
-                    <td>05/28/2024</td>
-                    <td>Service4</td>
-                    <td>01:00 PM</td>
-                    <td>03:00 PM</td>
-                    <td>03:30 PM 05/28/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000029</a></td>
-                    <td>PatientFName4</td>
-                    <td>PatientLName4</td>
-                    <td>ProviderFName5</td>
-                    <td>ProviderLName5</td>
-                    <td>05/29/2024</td>
-                    <td>Service1</td>
-                    <td>10:00 AM</td>
-                    <td>12:00 PM</td>
-                    <td>12:30 PM 05/29/2024</td>
-                    <td>YES</td>
-                </tr>
-                <tr>
-                    <td><a href="adminnoteview">0000030</a></td>
-                    <td>PatientFName5</td>
-                    <td>PatientLName5</td>
-                    <td>ProviderFName1</td>
-                    <td>ProviderLName1</td>
-                    <td>05/29/2024</td>
-                    <td>Service2</td>
-                    <td>01:00 PM</td>
-                    <td>03:00 PM</td>
-                    <td>03:30 PM 05/29/2024</td>
-                    <td>PENDING</td>
-                </tr>                     
+        <div class="adminnotes">
+            <ul class="adminnotes-filter">
+                <li>
+                    <label for="patientfname">First Name: </label> 
+                    <input type="text" id="patientfname" onkeyup="filterTable()">
+                </li>
+                <li>
+                    <label for="patientlname">Last Name: </label>
+                    <input type="text" id="patientlname" onkeyup="filterTable()">
+                </li>
+                <li>
+                    <label for="providerfname">Provider First Name: </label> 
+                    <input type="text" id="providerfname" onkeyup="filterTable()">
+                </li>
+                <li>
+                    <label for="providerlname">Provider Last Name: </label>
+                    <input type="text" id="providerlname" onkeyup="filterTable()">
+                </li>
+                <li>
+                    <label for="servicedatestart">Between dates:</label> 
+                    <input type="date" id="servicedatestart" onchange="filterTable()">
+                    <label for="servicedateend"> and </label>
+                    <input type="date" id="servicedateend" onchange="filterTable()"> 
+                </li> 
+                <li>
+                    <label for="servicetimestart">Between times:</label> 
+                    <input type="time" id="servicetimestart" onchange="filterTable()">
+                    <label for="servicetimeend"> and </label>
+                    <input type="time" id="servicetimeend" onchange="filterTable()"> 
+                </li>
+                <li>
+                    <label for="servicetype">Type of Service:</label> 
+                    <select id="servicetype" onchange="filterTable()">
+                        <option value="service1">Service1</option>
+                        <option value="service2">Service2</option>
+                        <option value="service3">Service3</option>
+                        <option value="service4">Service4</option>
+                    </select> 
+                </li> 
+                <button class="clear" onclick="clearFilters()">Clear Filters</button>
+            </ul>
+            <table class="adminnotes-notes" id="myTable">
+                <thead>
+                    <tr>
+                        <th>Note ID</th>
+                        <th>Patient FName</th>
+                        <th>Patient LName</th>
+                        <th>Provider FName</th>
+                        <th>Provider LName</th>
+                        <th>Service Date</th>
+                        <th>Service Type</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Last Saved</th>
+                        <th>Approved?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="adminnoteview">0000001</a></td>
+                        <td>PatientFName1</td>
+                        <td>PatientLName1</td>
+                        <td>ProviderFName1</td>
+                        <td>ProviderLName1</td>
+                        <td>05/15/2024</td>
+                        <td>Service1</td>
+                        <td>08:00 AM</td>
+                        <td>10:00 AM</td>
+                        <td>10:30 AM 05/15/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000002</a></td>
+                        <td>PatientFName2</td>
+                        <td>PatientLName2</td>
+                        <td>ProviderFName2</td>
+                        <td>ProviderLName2</td>
+                        <td>05/15/2024</td>
+                        <td>Service2</td>
+                        <td>10:30 AM</td>
+                        <td>01:30 PM</td>
+                        <td>02:00 PM 05/15/2024</td>
+                        <td>NO</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000003</a></td>
+                        <td>PatientFName3</td>
+                        <td>PatientLName3</td>
+                        <td>ProviderFName3</td>
+                        <td>ProviderLName3</td>
+                        <td>05/16/2024</td>
+                        <td>Service3</td>
+                        <td>09:00 AM</td>
+                        <td>11:00 AM</td>
+                        <td>11:30 AM 05/16/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000004</a></td>
+                        <td>PatientFName4</td>
+                        <td>PatientLName4</td>
+                        <td>ProviderFName4</td>
+                        <td>ProviderLName4</td>
+                        <td>05/16/2024</td>
+                        <td>Service4</td>
+                        <td>01:00 PM</td>
+                        <td>03:00 PM</td>
+                        <td>03:30 PM 05/16/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000005</a></td>
+                        <td>PatientFName5</td>
+                        <td>PatientLName5</td>
+                        <td>ProviderFName5</td>
+                        <td>ProviderLName5</td>
+                        <td>05/17/2024</td>
+                        <td>Service1</td>
+                        <td>09:00 AM</td>
+                        <td>11:00 AM</td>
+                        <td>11:30 AM 05/17/2024</td>
+                        <td>NO</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000006</a></td>
+                        <td>PatientFName1</td>
+                        <td>PatientLName1</td>
+                        <td>ProviderFName2</td>
+                        <td>ProviderLName2</td>
+                        <td>05/17/2024</td>
+                        <td>Service2</td>
+                        <td>11:30 AM</td>
+                        <td>01:30 PM</td>
+                        <td>02:00 PM 05/17/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000007</a></td>
+                        <td>PatientFName2</td>
+                        <td>PatientLName2</td>
+                        <td>ProviderFName3</td>
+                        <td>ProviderLName3</td>
+                        <td>05/18/2024</td>
+                        <td>Service3</td>
+                        <td>09:30 AM</td>
+                        <td>11:30 AM</td>
+                        <td>12:00 PM 05/18/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000008</a></td>
+                        <td>PatientFName3</td>
+                        <td>PatientLName3</td>
+                        <td>ProviderFName4</td>
+                        <td>ProviderLName4</td>
+                        <td>05/18/2024</td>
+                        <td>Service4</td>
+                        <td>01:30 PM</td>
+                        <td>03:30 PM</td>
+                        <td>04:00 PM 05/18/2024</td>
+                        <td>NO</td>
+                    </tr>
+                    <!-- Continue with the remaining rows -->
+                    <tr>
+                        <td><a href="adminnoteview">0000009</a></td>
+                        <td>PatientFName4</td>
+                        <td>PatientLName4</td>
+                        <td>ProviderFName5</td>
+                        <td>ProviderLName5</td>
+                        <td>05/19/2024</td>
+                        <td>Service1</td>
+                        <td>10:00 AM</td>
+                        <td>12:00 PM</td>
+                        <td>12:30 PM 05/19/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000010</a></td>
+                        <td>PatientFName5</td>
+                        <td>PatientLName5</td>
+                        <td>ProviderFName1</td>
+                        <td>ProviderLName1</td>
+                        <td>05/19/2024</td>
+                        <td>Service2</td>
+                        <td>01:00 PM</td>
+                        <td>03:00 PM</td>
+                        <td>03:30 PM 05/19/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000011</a></td>
+                        <td>PatientFName1</td>
+                        <td>PatientLName1</td>
+                        <td>ProviderFName3</td>
+                        <td>ProviderLName3</td>
+                        <td>05/20/2024</td>
+                        <td>Service3</td>
+                        <td>08:30 AM</td>
+                        <td>10:30 AM</td>
+                        <td>11:00 AM 05/20/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000012</a></td>
+                        <td>PatientFName2</td>
+                        <td>PatientLName2</td>
+                        <td>ProviderFName4</td>
+                        <td>ProviderLName4</td>
+                        <td>05/20/2024</td>
+                        <td>Service4</td>
+                        <td>11:00 AM</td>
+                        <td>01:00 PM</td>
+                        <td>01:30 PM 05/20/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000013</a></td>
+                        <td>PatientFName3</td>
+                        <td>PatientLName3</td>
+                        <td>ProviderFName5</td>
+                        <td>ProviderLName5</td>
+                        <td>05/21/2024</td>
+                        <td>Service1</td>
+                        <td>09:30 AM</td>
+                        <td>11:30 AM</td>
+                        <td>12:00 PM 05/21/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000014</a></td>
+                        <td>PatientFName4</td>
+                        <td>PatientLName4</td>
+                        <td>ProviderFName1</td>
+                        <td>ProviderLName1</td>
+                        <td>05/21/2024</td>
+                        <td>Service2</td>
+                        <td>01:00 PM</td>
+                        <td>03:00 PM</td>
+                        <td>03:30 PM 05/21/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000015</a></td>
+                        <td>PatientFName5</td>
+                        <td>PatientLName5</td>
+                        <td>ProviderFName2</td>
+                        <td>ProviderLName2</td>
+                        <td>05/22/2024</td>
+                        <td>Service3</td>
+                        <td>10:00 AM</td>
+                        <td>12:00 PM</td>
+                        <td>12:30 PM 05/22/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000016</a></td>
+                        <td>PatientFName1</td>
+                        <td>PatientLName1</td>
+                        <td>ProviderFName4</td>
+                        <td>ProviderLName4</td>
+                        <td>05/22/2024</td>
+                        <td>Service4</td>
+                        <td>01:30 PM</td>
+                        <td>03:30 PM</td>
+                        <td>04:00 PM 05/22/2024</td>
+                        <td>NO</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000017</a></td>
+                        <td>PatientFName2</td>
+                        <td>PatientLName2</td>
+                        <td>ProviderFName5</td>
+                        <td>ProviderLName5</td>
+                        <td>05/23/2024</td>
+                        <td>Service1</td>
+                        <td>08:00 AM</td>
+                        <td>10:00 AM</td>
+                        <td>10:30 AM 05/23/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000018</a></td>
+                        <td>PatientFName3</td>
+                        <td>PatientLName3</td>
+                        <td>ProviderFName1</td>
+                        <td>ProviderLName1</td>
+                        <td>05/23/2024</td>
+                        <td>Service2</td>
+                        <td>10:30 AM</td>
+                        <td>12:30 PM</td>
+                        <td>01:00 PM 05/23/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000019</a></td>
+                        <td>PatientFName4</td>
+                        <td>PatientLName4</td>
+                        <td>ProviderFName2</td>
+                        <td>ProviderLName2</td>
+                        <td>05/24/2024</td>
+                        <td>Service3</td>
+                        <td>11:00 AM</td>
+                        <td>01:00 PM</td>
+                        <td>01:30 PM 05/24/2024</td>
+                        <td>NO</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000020</a></td>
+                        <td>PatientFName5</td>
+                        <td>PatientLName5</td>
+                        <td>ProviderFName3</td>
+                        <td>ProviderLName3</td>
+                        <td>05/24/2024</td>
+                        <td>Service4</td>
+                        <td>01:30 PM</td>
+                        <td>03:30 PM</td>
+                        <td>04:00 PM 05/24/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000021</a></td>
+                        <td>PatientFName1</td>
+                        <td>PatientLName1</td>
+                        <td>ProviderFName5</td>
+                        <td>ProviderLName5</td>
+                        <td>05/25/2024</td>
+                        <td>Service1</td>
+                        <td>09:00 AM</td>
+                        <td>11:00 AM</td>
+                        <td>11:30 AM 05/25/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000022</a></td>
+                        <td>PatientFName2</td>
+                        <td>PatientLName2</td>
+                        <td>ProviderFName1</td>
+                        <td>ProviderLName1</td>
+                        <td>05/25/2024</td>
+                        <td>Service2</td>
+                        <td>11:30 AM</td>
+                        <td>01:30 PM</td>
+                        <td>02:00 PM 05/25/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000023</a></td>
+                        <td>PatientFName3</td>
+                        <td>PatientLName3</td>
+                        <td>ProviderFName2</td>
+                        <td>ProviderLName2</td>
+                        <td>05/26/2024</td>
+                        <td>Service3</td>
+                        <td>09:30 AM</td>
+                        <td>11:30 AM</td>
+                        <td>12:00 PM 05/26/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000024</a></td>
+                        <td>PatientFName4</td>
+                        <td>PatientLName4</td>
+                        <td>ProviderFName3</td>
+                        <td>ProviderLName3</td>
+                        <td>05/26/2024</td>
+                        <td>Service4</td>
+                        <td>01:00 PM</td>
+                        <td>03:00 PM</td>
+                        <td>03:30 PM 05/26/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000025</a></td>
+                        <td>PatientFName5</td>
+                        <td>PatientLName5</td>
+                        <td>ProviderFName4</td>
+                        <td>ProviderLName4</td>
+                        <td>05/27/2024</td>
+                        <td>Service1</td>
+                        <td>10:00 AM</td>
+                        <td>12:00 PM</td>
+                        <td>12:30 PM 05/27/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000026</a></td>
+                        <td>PatientFName1</td>
+                        <td>PatientLName1</td>
+                        <td>ProviderFName2</td>
+                        <td>ProviderLName2</td>
+                        <td>05/27/2024</td>
+                        <td>Service2</td>
+                        <td>01:30 PM</td>
+                        <td>03:30 PM</td>
+                        <td>04:00 PM 05/27/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000027</a></td>
+                        <td>PatientFName2</td>
+                        <td>PatientLName2</td>
+                        <td>ProviderFName3</td>
+                        <td>ProviderLName3</td>
+                        <td>05/28/2024</td>
+                        <td>Service3</td>
+                        <td>09:00 AM</td>
+                        <td>11:00 AM</td>
+                        <td>11:30 AM 05/28/2024</td>
+                        <td>PENDING</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000028</a></td>
+                        <td>PatientFName3</td>
+                        <td>PatientLName3</td>
+                        <td>ProviderFName4</td>
+                        <td>ProviderLName4</td>
+                        <td>05/28/2024</td>
+                        <td>Service4</td>
+                        <td>01:00 PM</td>
+                        <td>03:00 PM</td>
+                        <td>03:30 PM 05/28/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000029</a></td>
+                        <td>PatientFName4</td>
+                        <td>PatientLName4</td>
+                        <td>ProviderFName5</td>
+                        <td>ProviderLName5</td>
+                        <td>05/29/2024</td>
+                        <td>Service1</td>
+                        <td>10:00 AM</td>
+                        <td>12:00 PM</td>
+                        <td>12:30 PM 05/29/2024</td>
+                        <td>YES</td>
+                    </tr>
+                    <tr>
+                        <td><a href="adminnoteview">0000030</a></td>
+                        <td>PatientFName5</td>
+                        <td>PatientLName5</td>
+                        <td>ProviderFName1</td>
+                        <td>ProviderLName1</td>
+                        <td>05/29/2024</td>
+                        <td>Service2</td>
+                        <td>01:00 PM</td>
+                        <td>03:00 PM</td>
+                        <td>03:30 PM 05/29/2024</td>
+                        <td>PENDING</td>
+                    </tr>                     
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
 
     <script>
         document.getElementById("servicetype").selectedIndex = -1;
