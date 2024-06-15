@@ -82,6 +82,7 @@ nav a:hover {
 
 nav a:hover * {
     color: var(--primary);
+    cursor: grab;
 }
 
 .highlighted * {
@@ -126,6 +127,14 @@ input[type="submit"] {
     background-color: var(--primary);
     border-color: var(--primary);
     color: var(--background);
+}
+
+button:not(.addnote):hover,
+input[type="submit"]:hover {
+    cursor: grab;
+    background-color: var(--background);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .backbutton {
@@ -234,85 +243,7 @@ textarea {
     width: max-content;
 }
 
-/* admindashboard */
-.filter {
-    justify-items: flex-start;
-    display: grid;
-    gap: 1em;
-    grid-template-columns: 1fr; 
-    grid-template-areas: 
-        "patientname"
-        "providername"
-        "servicedate"
-        "servicetime"
-        "servicetype"
-        "clear"
-        ;
-}
-
-.clear {
-    grid-area: clear;
-}
-.patientname {
-    grid-area: patientname;
-}
-
-.servicedate {
-    grid-area: servicedate;
-}
-
-.providername {
-    grid-area: providername;
-}
-
-.servicetime {
-    grid-area: servicetime;
-}
-
-.servicetype {
-    grid-area: servicetype;
-}
-
-.adminfilter > div, .adminfilter > button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5em;
-}
-
-.providerfilter {
-    justify-items: center;
-    display: grid;
-    gap: 1em;
-    grid-template-columns: 1fr; 
-    grid-template-areas: 
-        "patientname"
-        "servicedate"
-        "servicetime"
-        "servicetype"
-        "clear"
-        ;
-}
-
-.providerfilter > div, .providerfilter > button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5em;
-}
-/* basic container styling */
-
-.adminfilter, .providerfilter {
-    background-color: var(--base2);
-    border-radius: 0.3em;
-    padding: 0.5em 0.5em;
-    margin: 1em auto;
-    width: max-content;
-    
-}
-
+/* END LAYOUTS */
 h3 {
     margin: 0;
     padding: 0;
