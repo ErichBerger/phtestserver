@@ -30,11 +30,13 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:        ":4080",
+		Addr:        ":80",
 		Handler:     app.routes(),
 		IdleTimeout: time.Minute,
+		ErrorLog:    slog.NewLogLogger(log.Handler(), slog.LevelInfo),
 	}
 
+	log.Info("starting server", "addr", srv.Addr)
 	if err := srv.ListenAndServe(); err != nil {
 		app.log.Warn(err.Error())
 		os.Exit(1)
