@@ -10,6 +10,11 @@
 
 html {
     font-size: 100%;
+    font-weight: 500;
+}
+
+strong, b {
+    font-weight: 1000;
 }
 
 *, *:before, *:after {
@@ -52,11 +57,12 @@ header {
 nav {
     border-bottom: solid;
     border-color: var(--secondary);
+    border-width: 0.15em;
 }
 
 nav ul {
-    margin: 0 -6em;
-    padding: 0;
+    margin: 0;
+    padding: 0 ;
     list-style: none;
     display: flex;
     flex-direction: row;
@@ -114,7 +120,7 @@ input:not([type="checkbox"]) {
     font: inherit;
     letter-spacing: inherit;
     word-spacing: inherit;
-    border: 0.1em solid var(--textlight);
+    border: 0.15em solid var(--textlight);
     padding: 0.2em 0.6em;
     border-radius: 0.5em;
     background-color: var(--base);
@@ -123,16 +129,14 @@ input:not([type="checkbox"]) {
 }
 
 button,
-input[type="submit"],
-.backbutton:hover,
-.alt-button:hover {
+input[type="submit"] {
     cursor: grab;
     background-color: var(--primary);
     border-color: var(--primary);
     color: var(--background);
 }
 
-button:not(.addnote):hover,
+button:hover,
 input[type="submit"]:hover,
 .backbutton,
 .alt-button {
@@ -142,10 +146,17 @@ input[type="submit"]:hover,
     color: var(--primary);
 }
 
+.backbuton:hover,
+.alt-button:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--background);
+}
+
 form {
     width: max-content;
     margin: 0 auto;
-    border: 0.1em solid var(--secondary);
+    border: 0.15em solid var(--secondary);
     border-radius: 0.5em;
 }
 /* LAYOUTS */
@@ -229,7 +240,7 @@ textarea {
     justify-content: flex-start;
     list-style: none;
     padding-right: 2em;
-    border-right: solid 0.1em var(--secondary);
+    border-right: solid 0.15em var(--secondary);
 }
 
 .notes-filter > li {
