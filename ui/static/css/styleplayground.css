@@ -123,25 +123,25 @@ input:not([type="checkbox"]) {
 }
 
 button,
-input[type="submit"] {
+input[type="submit"],
+.backbutton:hover,
+.alt-button:hover {
+    cursor: grab;
     background-color: var(--primary);
     border-color: var(--primary);
     color: var(--background);
 }
 
 button:not(.addnote):hover,
-input[type="submit"]:hover {
+input[type="submit"]:hover,
+.backbutton,
+.alt-button {
     cursor: grab;
     background-color: var(--background);
     border-color: var(--primary);
     color: var(--primary);
 }
 
-.backbutton {
-    background-color: var(--background);
-    border-color: var(--primary);
-    color: var(--primary);
-}
 form {
     width: max-content;
     margin: 0 auto;
@@ -208,7 +208,7 @@ textarea {
 
 /*Admin Notes */
 
-.notes {
+.notes, .note {
     margin: 1em auto;
     width: max-content;
     display: flex;
@@ -219,7 +219,7 @@ textarea {
     padding: 2em;
 }
 
-.notes-filter {
+.notes-filter, .note-info {
     width: max-content;
     height: max-content;
     display: flex;
@@ -243,6 +243,29 @@ textarea {
     width: max-content;
 }
 
+.note-note {
+    margin: 1em 0;
+    width: 40em;
+    overflow: wrap;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 2em;
+}
+
+.note-info > li > form {
+    width: 100%;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 1em;
+}
+
+.note p {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
 /* END LAYOUTS */
 h3 {
     margin: 0;

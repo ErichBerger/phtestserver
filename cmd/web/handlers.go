@@ -12,39 +12,39 @@ func (app *application) progressnoteHandler(w http.ResponseWriter, r *http.Reque
 	app.render(w, r, http.StatusOK, "progressnote.html")
 }
 
-func (app *application) colorTestHandler(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "colortest.html")
+func (app *application) notesAdmin(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "notes-admin.html")
+}
+func (app *application) noteAdmin(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "note-admin.html")
+}
+func (app *application) notes(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "notes.html")
 }
 
-func (app *application) admindashboardHandler(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "admindashboard.html")
-}
-func (app *application) adminnoteviewHandler(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "adminnoteview.html")
-}
-func (app *application) providerdashboardHandler(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "providerdashboard.html")
+func (app *application) note(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "note.html")
 }
 
-func (app *application) progressnoteHandler1(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "progressnote-1.html")
+func (app *application) addNote1(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "add-note-1.html")
 }
 
-func (app *application) progressnoteHandler2(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "progressnote-2.html")
+func (app *application) addNote2(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "add-note-2.html")
 }
-func (app *application) progressnoteHandler3(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "progressnote-3.html")
+func (app *application) addNote3(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "add-note-3.html")
 }
-func (app *application) progressnoteHandler4(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "progressnote-4.html")
+func (app *application) addNote4(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "add-note-4.html")
 }
-func (app *application) progressnoteHandler5(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "progressnote-5.html")
+func (app *application) addNote5(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "add-note-5.html")
 }
-func (app *application) progressnoteHandler6(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "progressnote-6.html")
+func (app *application) addNote6(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "add-note-6.html")
 }
-func (app *application) progressnoteHandler7(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "progressnote-7.html")
+func (app *application) addNote7(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, http.StatusOK, "add-note-7.html")
 }
