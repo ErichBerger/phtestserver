@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -29,15 +30,22 @@ func main() {
 		log:           log,
 	}
 
+	tlsConfig := &tls.Config{
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+	}
+
 	srv := &http.Server{
-		Addr:        ":8080",
-		Handler:     app.routes(),
-		IdleTimeout: time.Minute,
-		ErrorLog:    slog.NewLogLogger(log.Handler(), slog.LevelInfo),
+		Addr:         ":443",
+		Handler:      app.routes(),
+		ErrorLog:     slog.NewLogLogger(log.Handler(), slog.LevelInfo),
+		TLSConfig:    tlsConfig,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	log.Info("starting server", "addr", srv.Addr)
-	if err := srv.ListenAndServe(); err != nil {
+	if err := srv.ListenAndServeTLS("/etc/letsencrypt/live/ph-notes.com/cert.pem", "/etc/letsencrypt/live/ph-notes.com/privkey.pem"); err != nil {
 		app.log.Warn(err.Error())
 		os.Exit(1)
 	}
