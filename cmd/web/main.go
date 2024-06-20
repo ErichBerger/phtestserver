@@ -44,8 +44,10 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
+	cert, key := getCertFiles()
+
 	log.Info("starting server", "addr", srv.Addr)
-	if err := srv.ListenAndServeTLS("/etc/letsencrypt/live/ph-notes.com/cert.pem", "/etc/letsencrypt/live/ph-notes.com/privkey.pem"); err != nil {
+	if err := srv.ListenAndServeTLS(cert, key); err != nil {
 		app.log.Warn(err.Error())
 		os.Exit(1)
 	}
