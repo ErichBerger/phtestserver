@@ -4,9 +4,11 @@ import (
 	"net/http"
 )
 
-func (app *application) render(w http.ResponseWriter, r *http.Request, status int, pageName string) {
-	templateSet, ok := app.templateCache[pageName]
+func (app *application) render(w http.ResponseWriter, r *http.Request, status int, pageName string, data data) {
 
+	// Access the page from the cache
+	templateSet, ok := app.templateCache[pageName]
+	// If it doesn't exist, warn
 	if !ok {
 
 		app.log.Warn("Template not found", "name", pageName)
@@ -15,7 +17,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 
 	w.WriteHeader(status)
 
-	err := templateSet.ExecuteTemplate(w, "base", nil)
+	err := templateSet.ExecuteTemplate(w, "base", data)
 
 	if err != nil {
 		app.log.Warn("template not executed", "name", pageName)

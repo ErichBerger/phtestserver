@@ -1,21 +1,21 @@
 {{define "title"}}Note{{end}}
     {{define "main"}}
         <h1>Progress Note</h1>
-  
+        {{with .Note}}
         <div class="note">
             <ul class="note-info">
                 <li>
-                    <b>Note ID:</b> 0000021
+                    <b>Note ID:</b> {{.ID}}
                 </li>
 
                 <li>
-                    <b>Patient: </b> First Last 
+                    <b>Patient: </b> {{.Patient}}
                 </li>
                 <li>
-                    <b>Provider: </b> First Last
+                    <b>Provider: </b> {{.Provider}}
                 </li>
                 <li>
-                    <b>Service: </b> Service1
+                    <b>Service: </b> {{.Service}}
                 </li>
                 <li>
                     <b>Date of Service: </b> 05/25/2024
@@ -25,7 +25,7 @@
                     <b>Time: </b> 09:00AM to 11:00AM
                 </li>
                 <li>
-                    <b>Status: </b> Pending
+                    <b>Status: </b> {{.Status}}
                 </li>
             </ul>
             <div class="note-note">
@@ -73,4 +73,5 @@
             </ul>
             <button type="submit" action="/notes" method="get">Back</button>
         </div>
+        {{end}}
 {{end}}

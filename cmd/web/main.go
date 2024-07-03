@@ -7,11 +7,16 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/ErichBerger/phtestserver/internal/models"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
 	templateCache map[string]*template.Template
 	log           *slog.Logger
+	users         *models.UserModel
+	notes         *models.NoteModel
 }
 
 func main() {
@@ -24,10 +29,20 @@ func main() {
 		log.Warn(err.Error())
 		os.Exit(1)
 	}
+	dsn := "user:password@/dbname?parseTime=true"
+
+	db, err := models.NewDB(dsn)
+
+	defer db.Close()
+
+	// if the db is not instantiated, it should exit the program.
+	// for right now, until we actually make it, we can just fake the results.
 
 	app := &application{
 		templateCache: tc,
 		log:           log,
+		users:         &models.UserModel{DB: db},
+		notes:         &models.NoteModel{DB: db},
 	}
 
 	tlsConfig := &tls.Config{
@@ -35,7 +50,7 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:         ":443",
+		Addr:         ":8080",
 		Handler:      app.routes(),
 		ErrorLog:     slog.NewLogLogger(log.Handler(), slog.LevelInfo),
 		TLSConfig:    tlsConfig,
@@ -44,10 +59,8 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	cert, key := getCertFiles()
-
 	log.Info("starting server", "addr", srv.Addr)
-	if err := srv.ListenAndServeTLS(cert, key); err != nil {
+	if err := srv.ListenAndServe(); err != nil {
 		app.log.Warn(err.Error())
 		os.Exit(1)
 	}

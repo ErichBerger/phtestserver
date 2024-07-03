@@ -3,7 +3,14 @@ package main
 import (
 	"html/template"
 	"path/filepath"
+
+	"github.com/ErichBerger/phtestserver/internal/models"
 )
+
+type data struct {
+	Note models.Note
+	User models.User
+}
 
 func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}

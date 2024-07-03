@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (app *application) routes() *http.ServeMux {
+func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
@@ -15,8 +15,8 @@ func (app *application) routes() *http.ServeMux {
 	mux.HandleFunc("/progressnote", app.progressnoteHandler)
 	mux.HandleFunc("/notes-admin", app.notesAdmin)
 	mux.HandleFunc("/note-admin/{id}", app.noteAdmin)
-	mux.HandleFunc("/notes", app.notes)
-	mux.HandleFunc("/note/{id}", app.note)
+	mux.HandleFunc("/notes", app.notesHandler)
+	mux.HandleFunc("/note/{id}", app.noteHandler)
 
 	//Progress Notes Path
 	mux.HandleFunc("/add-note-1", app.addNote1)
@@ -26,5 +26,10 @@ func (app *application) routes() *http.ServeMux {
 	mux.HandleFunc("/add-note-5", app.addNote5)
 	mux.HandleFunc("/add-note-6", app.addNote6)
 	mux.HandleFunc("/add-note-7", app.addNote7)
-	return mux
+	// We're using a closure over commonHeaders.
+	// There are certain things we want to respond with not matter the request, so this
+	// provides a way to call the commonHeaders function, which in turn calls the appropriate
+	// function from mux
+
+	return commonHeaders(mux)
 }
