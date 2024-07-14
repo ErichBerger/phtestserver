@@ -2,8 +2,10 @@ package main
 
 import (
 	"net/http"
+	"strings"
 	"time"
-	"github.com/dgrijalva/jwt-go"
+
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -11,24 +13,32 @@ var (
 	jwtKey = []byte("secret-key")
 )
 
-type Claims struct {
-	Username string `json:"username"`
-	jwt.StandardClaims
-}
-
 func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		http.Error(w, "Method Not Allowed", 405)
+
+	err := r.ParseForm()
+
+	if err != nil {
+		app.log.Error("Couldn't parse form.")
+		http.Error(w, "Internal Error", http.StatusInternalServerError)
 		return
 	}
 
-	username := r.FormValue("user")
-	password := r.FormValue("pass")
-
+	username := r.PostForm.Get("user")
+	if strings.Compare(username, "") == 0 {
+		app.log.Error("Failed to parse username.")
+		http.Error(w, "Internal Error", http.StatusInternalServerError)
+		return
+	}
+	password := r.PostForm.Get("pass")
+	if strings.Compare(password, "") == 0 {
+		app.log.Error("Failed to parse password.")
+		http.Error(w, "Internal Error", http.StatusInternalServerError)
+		return
+	}
+	// Get hashed password from DB and compare with submitted hashed password
 	storedPasswordHash := "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm" // bcrypt hash for "password"
 
-	err := bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(password))
 
 	if err != nil {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
@@ -36,14 +46,8 @@ func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	expirationTime := time.Now().Add(time.Hour)
-	claims := &Claims{
-		Username: username,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(expirationTime), Subject: username})
 	tokenString, err := token.SignedString(jwtKey)
 
 	if err != nil {
@@ -52,8 +56,8 @@ func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name: "token",
-		Value: tokenString,
+		Name:    "token",
+		Value:   tokenString,
 		Expires: expirationTime,
 	})
 

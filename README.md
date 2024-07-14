@@ -14,3 +14,11 @@
   - Form Submissions
     - Note: Use JWT or session to store note content until note is submitted to prevent partial storage of duplicate info
     - Note: for each new page, if data has been posted use it to update the session note (if available)
+
+
+  - Database:
+    - Create tables for users
+    - Create table for notes
+    - Find way to store dsn not hardwired in code (only flags? env variable?)
+    - Create script to create database automatically
+  

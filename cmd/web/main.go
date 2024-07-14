@@ -29,12 +29,16 @@ func main() {
 		log.Warn(err.Error())
 		os.Exit(1)
 	}
-	dsn := "user:password@/dbname?parseTime=true"
+	dsn := "phadmin:teambadass@/phtestserver?parseTime=true"
 
 	db, err := models.NewDB(dsn)
 
-	defer db.Close()
+	if err != nil {
+		log.Error(err.Error())
+		os.Exit(1)
+	}
 
+	defer db.Close()
 	// if the db is not instantiated, it should exit the program.
 	// for right now, until we actually make it, we can just fake the results.
 
@@ -61,7 +65,7 @@ func main() {
 
 	log.Info("starting server", "addr", srv.Addr)
 	if err := srv.ListenAndServe(); err != nil {
-		app.log.Warn(err.Error())
+		app.log.Error(err.Error())
 		os.Exit(1)
 	}
 }

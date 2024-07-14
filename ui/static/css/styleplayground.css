@@ -194,16 +194,29 @@ form {
     width: 25;
 }
 
-.progressnote > div {
+.progressnote > div.initial {
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     align-content: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     justify-items: center;
     gap: 0.5em;
 }
+
+.progressnote > div.text {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+    gap: 0.5em;
+}
+
+
 
 form > div.bnbuttons {
     width: 100%;

@@ -28,9 +28,11 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/add-note-5", app.addNote5)
 	mux.HandleFunc("/add-note-6", app.addNote6)
 	mux.HandleFunc("/add-note-7", app.addNote7)
+	mux.Handle("POST /add-note", app.adminCheck(http.HandlerFunc(app.addNotePost)))
+	mux.HandleFunc("GET /add-note", app.addNoteGet)
 
 	//Login
-	mux.HandleFunc("/auth", app.loginHandler)
+	mux.HandleFunc("POST /auth", app.loginHandler)
 
 	// We're using a closure over commonHeaders.
 	// There are certain things we want to respond with not matter the request, so this
