@@ -8,8 +8,10 @@ import (
 )
 
 type data struct {
-	Note models.Note
-	User models.User
+	Note       models.Note
+	User       models.User
+	Form       any
+	IsLoggedIn bool
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {

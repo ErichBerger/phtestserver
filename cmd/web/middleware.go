@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -11,32 +12,57 @@ import (
 func commonHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Set some common headers here
-		w.Header().Set("server", "Go")
-
+		w.Header().Set("Server", "Go")
+		w.Header().Set("Content-Security-Policy", "default-src 'self'; style-src 'self' fonts.googleapis.com; font-src fonts.gstatic.com")
+		w.Header().Set("Referrer-Policy", "origin-when-cross-origin")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "deny")
+		w.Header().Set("X-XSS-Protection", "0")
 		next.ServeHTTP(w, r)
 
 		// anything here will be called only after the next handler's method has finished
 	})
 }
 
-func (app *application) adminCheck(next http.Handler) http.Handler {
+func (app *application) logRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ip := r.RemoteAddr
+		proto := r.Proto
+		method := r.Method
+		uri := r.URL.RequestURI()
+
+		app.log.Info("receivedrequest", "ip", ip, "proto", proto, "method", method, "uri", uri)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (app *application) recoverPanic(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				w.Header().Set("Connection", "close")
+				app.serverError(w, r, fmt.Errorf("%s", err))
+			}
+		}()
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (app *application) providerVerify(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		c, err := r.Cookie("token")
 		if err != nil {
-			if err == http.ErrNoCookie {
-				app.log.Error("Couldn't parse token from cookie.")
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			if errors.Is(err, http.ErrNoCookie) {
+				http.Redirect(w, r, "/", http.StatusSeeOther)
 				return
 			}
-			app.log.Error("Something else happened parsing the cookie.")
-			http.Error(w, "Bad Request", http.StatusBadRequest)
+			app.serverError(w, r, err)
 			return
 		}
 
-		tokenString := c.Value
-
-		tkn, err := jwt.ParseWithClaims(tokenString, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
+		tkn, err := jwt.ParseWithClaims(c.Value, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
 			// Check to see if alg is same
 
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -47,19 +73,16 @@ func (app *application) adminCheck(next http.Handler) http.Handler {
 		})
 
 		if err != nil {
-			if err == jwt.ErrSignatureInvalid {
-				app.log.Error(err.Error())
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			if errors.Is(err, jwt.ErrSignatureInvalid) {
+				app.clientError(w, http.StatusSeeOther)
 				return
 			}
-			app.log.Error(err.Error())
-			http.Error(w, "Bad Request", http.StatusBadRequest)
+			app.serverError(w, r, err)
 			return
 		}
 
 		if !tkn.Valid {
-			app.log.Error("Invalid token.")
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			app.clientError(w, http.StatusUnauthorized)
 			return
 		}
 

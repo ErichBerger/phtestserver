@@ -1,11 +1,26 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 )
+
+func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
+	method := r.Method
+	uri := r.URL.RequestURI()
+
+	app.log.Error(err.Error(), "method", method, "uri", uri)
+
+	app.clientError(w, http.StatusInternalServerError)
+
+}
+func (app *application) clientError(w http.ResponseWriter, status int) {
+	http.Error(w, http.StatusText(status), status)
+}
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, status int, pageName string, data data) {
 
@@ -13,19 +28,21 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 	templateSet, ok := app.templateCache[pageName]
 	// If it doesn't exist, warn
 	if !ok {
-
-		app.log.Warn("Template not found", "name", pageName)
+		err := fmt.Errorf("the template %s does not exist", pageName)
+		app.serverError(w, r, err)
 		return
 	}
 
+	buf := new(bytes.Buffer)
+
+	err := templateSet.ExecuteTemplate(buf, "base", data)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(status)
 
-	err := templateSet.ExecuteTemplate(w, "base", data)
-
-	if err != nil {
-		app.log.Warn("template not executed", "name", pageName)
-		return
-	}
+	buf.WriteTo(w)
 
 }
 
@@ -70,4 +87,13 @@ func (app *application) HTMLTimeToGoTime(inputDate string, inputTime string) (ti
 	}
 
 	return time.Date(year, time.Month(month), day, hour, minute, 0, 0, time.UTC), nil
+}
+
+func (app *application) getTemplateData(r *http.Request) data {
+	username := r.Context().Value("username").(string)
+	if username == "" {
+		return data{IsLoggedIn: false}
+	}
+
+	return data{IsLoggedIn: true}
 }

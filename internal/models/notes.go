@@ -44,7 +44,7 @@ func (n *NoteModel) Insert(providerID int,
 	emergencyInterventions string) (int, error) {
 	statement := `insert into Note 
 	(providerID, patient, service, serviceDate, startTime, endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status)
-	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`
+	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')`
 
 	result, err := n.DB.Exec(statement, providerID, patient, service, serviceDate, startTime, endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions)
 
@@ -64,7 +64,7 @@ func (n *NoteModel) Insert(providerID int,
 func (n *NoteModel) Get(id int) (Note, error) {
 	//DB.query to get the note based on the id
 
-	statement := `select Note.id, concat(User.fname, ' ', User.lname), Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions from Note inner join User on Note.providerID = User.id where Note.id = ?`
+	statement := `select Note.id, concat(User.fname, ' ', User.lname), Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status from Note inner join User on Note.providerID = User.id where Note.id = ?`
 
 	row := n.DB.QueryRow(statement, id)
 
@@ -72,7 +72,7 @@ func (n *NoteModel) Get(id int) (Note, error) {
 
 	var startString, endString string
 
-	err := row.Scan(&note.ID, &note.Provider, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions)
+	err := row.Scan(&note.ID, &note.Provider, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions, &note.Status)
 
 	if err != nil {
 		return Note{}, err

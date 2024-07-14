@@ -15,10 +15,10 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/progressnote", app.progressnoteHandler)
 	mux.HandleFunc("/notes-admin", app.notesAdmin)
 	mux.HandleFunc("/note-admin/{id}", app.noteAdmin)
-	mux.Handle("/note/{id}", app.adminCheck(http.HandlerFunc(app.noteHandler)))
+	mux.Handle("/note/{id}", app.providerVerify(http.HandlerFunc(app.noteHandler)))
 
 	//protected
-	mux.Handle("/notes", app.adminCheck(http.HandlerFunc(app.notesHandler)))
+	mux.Handle("/notes", app.providerVerify(http.HandlerFunc(app.notesHandler)))
 
 	//Progress Notes Path
 	mux.HandleFunc("/add-note-1", app.addNote1)
@@ -28,8 +28,8 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/add-note-5", app.addNote5)
 	mux.HandleFunc("/add-note-6", app.addNote6)
 	mux.HandleFunc("/add-note-7", app.addNote7)
-	mux.Handle("POST /add-note", app.adminCheck(http.HandlerFunc(app.addNotePost)))
-	mux.Handle("GET /add-note", app.adminCheck(http.HandlerFunc(app.addNoteGet)))
+	mux.Handle("POST /add-note", app.providerVerify(http.HandlerFunc(app.addNotePost)))
+	mux.Handle("GET /add-note", app.providerVerify(http.HandlerFunc(app.addNoteGet)))
 
 	//Login
 	mux.HandleFunc("POST /auth", app.loginHandler)
@@ -39,5 +39,5 @@ func (app *application) routes() http.Handler {
 	// provides a way to call the commonHeaders function, which in turn calls the appropriate
 	// function from mux
 
-	return commonHeaders(mux)
+	return app.recoverPanic(app.logRequest(commonHeaders(mux)))
 }

@@ -15,7 +15,9 @@
   <body>
     <header>
         {{template "nav" .}}
-        
+      {{if .IsLoggedIn}}
+      <a class="addnote" href="/logout">Logout</button>  
+      {{end}}
       <a class="addnote" href="/add-note">+ Note</a>
     </header>
     <main>
