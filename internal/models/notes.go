@@ -42,7 +42,7 @@ func (n *NoteModel) Insert(providerID int,
 	assessmentStatus string,
 	riskFactors string,
 	emergencyInterventions string) (int, error) {
-	statement := `insert into note 
+	statement := `insert into Note 
 	(providerID, patient, service, serviceDate, startTime, endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status)
 	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`
 
@@ -70,10 +70,24 @@ func (n *NoteModel) Get(id int) (Note, error) {
 
 	var note Note
 
-	err := row.Scan(&note.ID, &note.Provider, &note.Patient, &note.Service, &note.ServiceDate, &note.StartTime, &note.EndTime, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions)
+	var startString, endString string
+
+	err := row.Scan(&note.ID, &note.Provider, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions)
 
 	if err != nil {
 		return Note{}, err
+	}
+
+	note.StartTime, err = time.Parse("03:04:05", startString)
+
+	if err != nil {
+
+	}
+
+	note.EndTime, err = time.Parse("03:04:05", endString)
+
+	if err != nil {
+
 	}
 
 	return note, nil

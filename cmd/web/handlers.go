@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -28,10 +29,19 @@ func (app *application) notesHandler(w http.ResponseWriter, r *http.Request) {
 func (app *application) noteHandler(w http.ResponseWriter, r *http.Request) {
 	// We're assuming we've already checked if they have appropriate authorization
 	// For now we're passing a dummy variable
-	note, err := app.notes.Get(127)
+
+	id, err := strconv.Atoi(r.PathValue("id"))
 
 	if err != nil {
-		// log error, return not found
+		app.log.Error(err.Error())
+		return
+	}
+
+	note, err := app.notes.Get(id)
+
+	if err != nil {
+		app.log.Error(err.Error())
+		http.Error(w, "Note not found.", http.StatusBadRequest)
 		return
 	}
 
@@ -125,6 +135,14 @@ func (app *application) addNotePost(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) addNoteGet(w http.ResponseWriter, r *http.Request) {
 	data := data{}
+
+	username := r.Context().Value("username")
+
+	if username == nil {
+		app.log.Error("No context with username provided.")
+	}
+
+	app.log.Info(fmt.Sprintf("username: %s", username))
 
 	app.render(w, r, http.StatusOK, "add-note.html", data)
 }

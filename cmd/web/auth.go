@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -36,15 +35,21 @@ func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Get hashed password from DB and compare with submitted hashed password
-	storedPasswordHash := "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm" // bcrypt hash for "password"
-
-	err = bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(password))
-
-	if err != nil {
+	if err := app.users.ValidateProvider(username, password); err != nil {
+		app.log.Error(err.Error())
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
+	/*
+			storedPasswordHash := "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm" // bcrypt hash for "password"
 
+			err = bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(password))
+
+		if err != nil {
+			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+			return
+		}
+	*/
 	expirationTime := time.Now().Add(time.Hour)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(expirationTime), Subject: username})

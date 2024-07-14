@@ -15,7 +15,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/progressnote", app.progressnoteHandler)
 	mux.HandleFunc("/notes-admin", app.notesAdmin)
 	mux.HandleFunc("/note-admin/{id}", app.noteAdmin)
-	mux.HandleFunc("/note/{id}", app.noteHandler)
+	mux.Handle("/note/{id}", app.adminCheck(http.HandlerFunc(app.noteHandler)))
 
 	//protected
 	mux.Handle("/notes", app.adminCheck(http.HandlerFunc(app.notesHandler)))
@@ -29,7 +29,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/add-note-6", app.addNote6)
 	mux.HandleFunc("/add-note-7", app.addNote7)
 	mux.Handle("POST /add-note", app.adminCheck(http.HandlerFunc(app.addNotePost)))
-	mux.HandleFunc("GET /add-note", app.addNoteGet)
+	mux.Handle("GET /add-note", app.adminCheck(http.HandlerFunc(app.addNoteGet)))
 
 	//Login
 	mux.HandleFunc("POST /auth", app.loginHandler)

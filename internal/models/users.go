@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"fmt"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -14,11 +16,28 @@ type UserModel struct {
 	DB *sql.DB
 }
 
-func (*UserModel) ValidateProvider() (bool, error) {
-	//DB.
+func (u *UserModel) ValidateProvider(username string, password string) error {
+	statement := `select hashedPassword from User where username = ?`
 
-	return true, nil
+	row := u.DB.QueryRow(statement, username)
+
+	var hashedPassword string
+
+	err := row.Scan(&hashedPassword)
+
+	if err != nil {
+		return err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
+
 func (u *UserModel) GetID(username string) (int, error) {
 	statement := `select id from User where User.username = ?`
 
