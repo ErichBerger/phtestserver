@@ -110,13 +110,16 @@ nav a:hover * {
     color: var(--background);
 }
 
+
+
 /* END NAVBAR */
 /* Make the inputs not so weird*/
 button,
 input[type="submit"],
 textarea,
 select,
-input:not([type="checkbox"]) {
+input:not([type="checkbox"]),
+a.logout {
     font: inherit;
     letter-spacing: inherit;
     word-spacing: inherit;
@@ -139,7 +142,8 @@ input[type="submit"] {
 button:hover,
 input[type="submit"]:hover,
 .backbutton,
-.alt-button {
+.alt-button,
+a.logout {
     cursor: grab;
     background-color: var(--background);
     border-color: var(--primary);
@@ -147,10 +151,24 @@ input[type="submit"]:hover,
 }
 
 .backbuton:hover,
-.alt-button:hover {
+.alt-button:hover,
+a.logout:hover {
     background-color: var(--primary);
     border-color: var(--primary);
     color: var(--background);
+}
+
+/* FOOTER STYLING */
+
+footer {
+    width: 100%;
+    padding: 0 2em;
+    display: flex;
+    justify-items: flex-end;
+}
+
+a.logout {
+    text-decoration: none;
 }
 
 form {

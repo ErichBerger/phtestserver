@@ -7,11 +7,26 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func (app *application) mainHandler(w http.ResponseWriter, r *http.Request) {
 
 	app.render(w, r, http.StatusOK, "home.html", data{})
+}
+
+func (app *application) logout(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("token")
+
+	if errors.Is(err, http.ErrNoCookie) {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+
+	c.Expires = time.Now()
+
+	// Override token cookie
+	http.SetCookie(w, c)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (app *application) progressnoteHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,9 +65,9 @@ func (app *application) noteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := data{
-		Note: note,
-	}
+	data := app.getTemplateData(r)
+
+	data.Note = note
 
 	app.render(w, r, http.StatusOK, "note.html", data)
 }

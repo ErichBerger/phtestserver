@@ -16,13 +16,15 @@
     <header>
         {{template "nav" .}}
       {{if .IsLoggedIn}}
-      <a class="addnote" href="/logout">Logout</button>  
+      <a class="logout" href="/logout">Logout</a>
       {{end}}
-      <a class="addnote" href="/add-note">+ Note</a>
     </header>
     <main>
         {{template "main" .}}
     </main>
   </body>
+  <footer>
+      <a class="addnote" href="/add-note">+ Note</a>
+  </footer>
 </html>
 {{end}}

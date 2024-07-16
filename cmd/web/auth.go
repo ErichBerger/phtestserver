@@ -40,19 +40,10 @@ func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
-	/*
-			storedPasswordHash := "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm" // bcrypt hash for "password"
 
-			err = bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(password))
-
-		if err != nil {
-			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
-			return
-		}
-	*/
 	expirationTime := time.Now().Add(time.Hour)
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(expirationTime), Subject: username})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(expirationTime), Subject: username, IssuedAt: jwt.NewNumericDate(time.Now())})
 	tokenString, err := token.SignedString(jwtKey)
 
 	if err != nil {

@@ -30,7 +30,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/add-note-7", app.addNote7)
 	mux.Handle("POST /add-note", app.providerVerify(http.HandlerFunc(app.addNotePost)))
 	mux.Handle("GET /add-note", app.providerVerify(http.HandlerFunc(app.addNoteGet)))
-
+	mux.Handle("/logout", app.providerVerify(http.HandlerFunc(app.logout)))
 	//Login
 	mux.HandleFunc("POST /auth", app.loginHandler)
 
