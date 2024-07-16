@@ -37,6 +37,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 
 	err := templateSet.ExecuteTemplate(buf, "base", data)
 	if err != nil {
+		app.log.Error(err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -90,10 +91,12 @@ func (app *application) HTMLTimeToGoTime(inputDate string, inputTime string) (ti
 }
 
 func (app *application) getTemplateData(r *http.Request) data {
-	username := r.Context().Value("username").(string)
-	if username == "" {
+
+	username := r.Context().Value("username")
+
+	if username == nil {
+		app.log.Info("username not logged in context")
 		return data{IsLoggedIn: false}
 	}
-
 	return data{IsLoggedIn: true}
 }

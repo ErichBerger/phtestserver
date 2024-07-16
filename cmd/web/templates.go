@@ -9,6 +9,7 @@ import (
 
 type data struct {
 	Note       models.Note
+	Notes      []models.Note
 	User       models.User
 	Form       any
 	IsLoggedIn bool

@@ -1,9 +1,18 @@
 {{define "nav"}}
+{{if .IsLoggedIn }}
 <nav>
   <ul>
-    <a class='{{block "notes" .}}{{end}}' href="/notes"><li>Notes</li></a>
+    <a class='{{block "notes" .}}{{end}}' href="/notes"><li>View Notes</li></a>
+    <a class='{{block "add-note" .}}{{end}}' href="/add-note"><li>Add Note</li></a>
     <a class='{{block "admin-notes" .}}{{end}}' href="/notes-admin"><li>Admin Notes</li></a>
-    <a class='{{block "login" .}}{{end}}' href="/home"><li>Login</li></a>
   </ul> 
 </nav>
+{{else}}
+<nav>
+  <ul>
+    <a class='{{block "home" .}}{{end}}' href="/home"><li>Home</li></a>
+    <a class='{{block "login" .}}{{end}}' href="/login"><li>Login</li></a>
+  </ul>
+</nav>
+{{end}}
 {{end}}

@@ -14,17 +14,12 @@
   </head>
   <body>
     <header>
-        {{template "nav" .}}
-      {{if .IsLoggedIn}}
+      {{template "nav" .}}
       <a class="logout" href="/logout">Logout</a>
-      {{end}}
     </header>
     <main>
         {{template "main" .}}
     </main>
   </body>
-  <footer>
-      <a class="addnote" href="/add-note">+ Note</a>
-  </footer>
 </html>
 {{end}}

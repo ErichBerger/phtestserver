@@ -110,6 +110,10 @@ nav a:hover * {
     color: var(--background);
 }
 
+.logout {
+    justify-self: flex-end;
+}
+
 
 
 /* END NAVBAR */
@@ -158,6 +162,24 @@ a.logout:hover {
     color: var(--background);
 }
 
+a.logout, a.noteid {
+    text-decoration: none;
+}
+
+a.noteid {
+    color: var(--text);
+    text-decoration-color: var(--text);
+    text-decoration-line: underline;
+    display:inline-block;
+    width: 100%;
+}
+
+a.noteid:hover {
+    color: var(--primary);
+    text-decoration-color: var(--primary);
+    cursor: grab;
+}
+
 /* FOOTER STYLING */
 
 footer {
@@ -167,9 +189,6 @@ footer {
     justify-items: flex-end;
 }
 
-a.logout {
-    text-decoration: none;
-}
 
 form {
     width: max-content;
@@ -308,6 +327,7 @@ textarea {
     margin: 0;
     padding: 0;
 }
+
 /* END LAYOUTS */
 h3 {
     margin: 0;

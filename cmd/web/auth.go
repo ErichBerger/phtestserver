@@ -12,7 +12,7 @@ var (
 	jwtKey = []byte("secret-key")
 )
 
-func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) postLogin(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 
@@ -57,5 +57,5 @@ func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
 		Expires: expirationTime,
 	})
 
-	http.Redirect(w, r, "/notes", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

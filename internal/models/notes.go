@@ -78,16 +78,16 @@ func (n *NoteModel) Get(id int) (Note, error) {
 		return Note{}, err
 	}
 
-	note.StartTime, err = time.Parse("03:04:05", startString)
+	note.StartTime, err = time.Parse("15:04:05", startString)
 
 	if err != nil {
-
+		return Note{}, nil
 	}
 
-	note.EndTime, err = time.Parse("03:04:05", endString)
+	note.EndTime, err = time.Parse("15:04:05", endString)
 
 	if err != nil {
-
+		return Note{}, nil
 	}
 
 	return note, nil
@@ -96,4 +96,50 @@ func (n *NoteModel) Get(id int) (Note, error) {
 func (*NoteModel) CheckExistingNote() (int, error) {
 
 	return 0, nil
+}
+
+func (n *NoteModel) GetNotesByProvider(username string) ([]Note, error) {
+
+	statement := `select Note.id, concat(User.fname, ' ', User.lname), Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status from Note inner join User on Note.providerID = User.id where User.username = ?`
+
+	rows, err := n.DB.Query(statement, username)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	notes := make([]Note, 0)
+
+	for rows.Next() {
+		var note Note
+		var startString, endString string
+
+		err := rows.Scan(&note.ID, &note.Provider, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions, &note.Status)
+
+		if err != nil {
+			return nil, err
+		}
+
+		note.StartTime, err = time.Parse("15:04:05", startString)
+
+		if err != nil {
+			return nil, err
+		}
+
+		note.EndTime, err = time.Parse("15:04:05", endString)
+
+		if err != nil {
+			return nil, err
+		}
+
+		notes = append(notes, note)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return notes, nil
 }

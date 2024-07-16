@@ -12,9 +12,14 @@ import (
 
 func (app *application) mainHandler(w http.ResponseWriter, r *http.Request) {
 
-	app.render(w, r, http.StatusOK, "home.html", data{})
+	data := app.getTemplateData(r)
+	app.render(w, r, http.StatusOK, "home.html", data)
 }
 
+func (app *application) getLogin(w http.ResponseWriter, r *http.Request) {
+	data := app.getTemplateData(r)
+	app.render(w, r, http.StatusOK, "login.html", data)
+}
 func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("token")
 
@@ -30,17 +35,39 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) progressnoteHandler(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "progressnote.html", data{})
+	data := app.getTemplateData(r)
+	app.render(w, r, http.StatusOK, "progressnote.html", data)
 }
 
 func (app *application) notesAdmin(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "notes-admin.html", data{})
+	data := app.getTemplateData(r)
+	app.render(w, r, http.StatusOK, "notes-admin.html", data)
 }
 func (app *application) noteAdmin(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "note-admin.html", data{})
+	data := app.getTemplateData(r)
+	app.render(w, r, http.StatusOK, "note-admin.html", data)
 }
+
 func (app *application) notesHandler(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "notes.html", data{})
+
+	username := r.Context().Value("username")
+
+	if username == nil {
+		app.serverError(w, r, fmt.Errorf("no username stored in context"))
+		return
+	}
+	notes, err := app.notes.GetNotesByProvider(username.(string))
+
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := app.getTemplateData(r)
+
+	data.Notes = notes
+
+	app.render(w, r, http.StatusOK, "notes.html", data)
 }
 
 func (app *application) noteHandler(w http.ResponseWriter, r *http.Request) {
@@ -131,15 +158,15 @@ func (app *application) addNotePost(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, fmt.Errorf("emergencyInterventions field not submitted"))
 	}
 
-	// Get userID from context
-	provider := r.Context().Value("username").(string)
+	// Get username from context
+	provider := r.Context().Value("username")
 
-	if strings.Compare(provider, "") == 0 {
+	if provider == nil {
 		app.serverError(w, r, fmt.Errorf("failed to parse provider from context"))
 		return
 	}
 
-	providerID, err := app.users.GetID(provider)
+	providerID, err := app.users.GetID(provider.(string))
 
 	if err != nil {
 		app.serverError(w, r, err)
@@ -160,7 +187,7 @@ func (app *application) addNotePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) addNoteGet(w http.ResponseWriter, r *http.Request) {
-	data := data{}
+	data := app.getTemplateData(r)
 
 	username := r.Context().Value("username")
 
@@ -175,39 +202,7 @@ func (app *application) addNoteGet(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) addNote1(w http.ResponseWriter, r *http.Request) {
 
-	data := data{}
+	data := app.getTemplateData(r)
 
 	app.render(w, r, http.StatusOK, "add-note-1.html", data)
-}
-
-func (app *application) addNote2(w http.ResponseWriter, r *http.Request) {
-
-	// If no note in session, redirect to first note page
-
-	// If note in session with data relevant to page, populate form with data
-
-	// If note in session with no relevant data, do not populate form
-	app.render(w, r, http.StatusOK, "add-note-2.html", data{})
-}
-
-func (app *application) addNote2Post(w http.ResponseWriter, r *http.Request) {
-	// Same as addNote2, but handles if data has been submitted from addNote1
-	// Adds to session data for ongoing note
-	// If data fields already exist for 2, does the same thing as addNote2
-}
-
-func (app *application) addNote3(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "add-note-3.html", data{})
-}
-func (app *application) addNote4(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "add-note-4.html", data{})
-}
-func (app *application) addNote5(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "add-note-5.html", data{})
-}
-func (app *application) addNote6(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "add-note-6.html", data{})
-}
-func (app *application) addNote7(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, http.StatusOK, "add-note-7.html", data{})
 }

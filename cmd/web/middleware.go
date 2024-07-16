@@ -63,7 +63,6 @@ func (app *application) providerVerify(next http.Handler) http.Handler {
 		}
 
 		tkn, err := jwt.ParseWithClaims(c.Value, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
-			// Check to see if alg is same
 
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, jwt.ErrSignatureInvalid
@@ -74,7 +73,7 @@ func (app *application) providerVerify(next http.Handler) http.Handler {
 
 		if err != nil {
 			if errors.Is(err, jwt.ErrSignatureInvalid) {
-				app.clientError(w, http.StatusSeeOther)
+				http.Redirect(w, r, "/", http.StatusSeeOther)
 				return
 			}
 			app.serverError(w, r, err)
@@ -82,16 +81,20 @@ func (app *application) providerVerify(next http.Handler) http.Handler {
 		}
 
 		if !tkn.Valid {
-			app.clientError(w, http.StatusUnauthorized)
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
 
-		// Here we're going to send the userid obtained from the token
-		ctx := r.Context()
-		ctx = context.WithValue(ctx, "username", "test")
-		r = r.WithContext(ctx)
+		username, err := tkn.Claims.GetSubject()
 
-		app.log.Info(fmt.Sprintf("User name is: %s", r.Context().Value("username")))
+		if err != nil {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "username", username)
+		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})
 }
