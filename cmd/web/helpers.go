@@ -2,12 +2,19 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
+
+type contextKey string
+
+const usernameContextKey = contextKey("username")
 
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
 	method := r.Method
@@ -90,11 +97,47 @@ func (app *application) HTMLTimeToGoTime(inputDate string, inputTime string) (ti
 	return time.Date(year, time.Month(month), day, hour, minute, 0, 0, time.UTC), nil
 }
 
+func (app *application) validateProvider(r *http.Request) (*http.Request, error) {
+
+	c, err := r.Cookie("token")
+	if err != nil {
+		return nil, err
+	}
+
+	tkn, err := jwt.ParseWithClaims(c.Value, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
+
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, jwt.ErrSignatureInvalid
+		}
+
+		return jwtKey, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !tkn.Valid {
+		return nil, jwt.ErrInvalidKey
+	}
+
+	username, err := tkn.Claims.GetSubject()
+
+	if err != nil {
+		return nil, jwt.ErrTokenInvalidSubject
+	}
+
+	app.log.Info(fmt.Sprintf("Username after helper function: %s", username))
+	r = r.Clone(context.WithValue(r.Context(), usernameContextKey, username))
+
+	return r, nil
+}
+
 func (app *application) getTemplateData(r *http.Request) data {
 
-	username := r.Context().Value("username")
+	_, ok := r.Context().Value(usernameContextKey).(string)
 
-	if username == nil {
+	if !ok {
 		app.log.Info("username not logged in context")
 		return data{IsLoggedIn: false}
 	}

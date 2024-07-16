@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -52,49 +50,21 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 func (app *application) providerVerify(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		c, err := r.Cookie("token")
+		newRequest, err := app.validateProvider(r)
 		if err != nil {
-			if errors.Is(err, http.ErrNoCookie) {
-				http.Redirect(w, r, "/", http.StatusSeeOther)
+			switch err {
+			case http.ErrNoCookie, jwt.ErrInvalidKey, jwt.ErrSignatureInvalid, jwt.ErrTokenInvalidSubject:
+				app.clientError(w, http.StatusUnauthorized)
+				return
+			default:
+				app.serverError(w, r, err)
 				return
 			}
-			app.serverError(w, r, err)
-			return
 		}
+		r = newRequest
+		username := r.Context().Value(usernameContextKey)
 
-		tkn, err := jwt.ParseWithClaims(c.Value, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
-
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, jwt.ErrSignatureInvalid
-			}
-
-			return jwtKey, nil
-		})
-
-		if err != nil {
-			if errors.Is(err, jwt.ErrSignatureInvalid) {
-				http.Redirect(w, r, "/", http.StatusSeeOther)
-				return
-			}
-			app.serverError(w, r, err)
-			return
-		}
-
-		if !tkn.Valid {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
-			return
-		}
-
-		username, err := tkn.Claims.GetSubject()
-
-		if err != nil {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
-			return
-		}
-
-		ctx := r.Context()
-		ctx = context.WithValue(ctx, "username", username)
-		r = r.WithContext(ctx)
+		app.log.Info(fmt.Sprintf("username after helper function call success without errors: %s", username))
 		next.ServeHTTP(w, r)
 	})
 }
