@@ -11,12 +11,14 @@ import (
 )
 
 func (app *application) mainHandler(w http.ResponseWriter, r *http.Request) {
+	r, _ = app.validateProvider(r)
 
 	data := app.getTemplateData(r)
 	app.render(w, r, http.StatusOK, "home.html", data)
 }
 
 func (app *application) getLogin(w http.ResponseWriter, r *http.Request) {
+	r, _ = app.validateProvider(r)
 	data := app.getTemplateData(r)
 	app.render(w, r, http.StatusOK, "login.html", data)
 }
@@ -97,18 +99,14 @@ func (app *application) noteHandler(w http.ResponseWriter, r *http.Request) {
 	data.Note = note
 	username, ok := r.Context().Value(usernameContextKey).(string)
 
+	app.log.Info("Username from context in noteHandler", "username", username)
+
 	if !ok {
 		app.serverError(w, r, fmt.Errorf("couldn't parse username from context"))
 		return
 	}
 
-	providerID, err := app.users.GetID(username)
-
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-	if note.ID != providerID {
+	if data.Note.Username != username {
 		app.clientError(w, http.StatusForbidden)
 		return
 	}

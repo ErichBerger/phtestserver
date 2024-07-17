@@ -9,7 +9,8 @@ import (
 // Note: This should probably be a timestamp, so that the implementation is not specific to html
 type Note struct {
 	ID                     int
-	Provider               string // Eventually split this into fname and lname, but for now is fine
+	Provider               string
+	Username               string // Eventually split this into fname and lname, but for now is fine
 	Patient                string
 	Service                string
 	ServiceDate            time.Time
@@ -64,7 +65,7 @@ func (n *NoteModel) Insert(providerID int,
 func (n *NoteModel) Get(id int) (Note, error) {
 	//DB.query to get the note based on the id
 
-	statement := `select Note.id, concat(User.fname, ' ', User.lname), Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status from Note inner join User on Note.providerID = User.id where Note.id = ?`
+	statement := `select Note.id, concat(User.fname, ' ', User.lname), User.username, Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status from Note inner join User on Note.providerID = User.id where Note.id = ?`
 
 	row := n.DB.QueryRow(statement, id)
 
@@ -72,7 +73,7 @@ func (n *NoteModel) Get(id int) (Note, error) {
 
 	var startString, endString string
 
-	err := row.Scan(&note.ID, &note.Provider, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions, &note.Status)
+	err := row.Scan(&note.ID, &note.Provider, &note.Username, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions, &note.Status)
 
 	if err != nil {
 		return Note{}, err
@@ -100,7 +101,7 @@ func (*NoteModel) CheckExistingNote() (int, error) {
 
 func (n *NoteModel) GetNotesByProvider(username string) ([]Note, error) {
 
-	statement := `select Note.id, concat(User.fname, ' ', User.lname), Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status from Note inner join User on Note.providerID = User.id where User.username = ?`
+	statement := `select Note.id, concat(User.fname, ' ', User.lname),Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status from Note inner join User on Note.providerID = User.id where User.username = ?`
 
 	rows, err := n.DB.Query(statement, username)
 

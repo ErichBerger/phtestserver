@@ -50,7 +50,7 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 func (app *application) providerVerify(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		newRequest, err := app.validateProvider(r)
+		r, err := app.validateProvider(r)
 		if err != nil {
 			switch err {
 			case http.ErrNoCookie, jwt.ErrInvalidKey, jwt.ErrSignatureInvalid, jwt.ErrTokenInvalidSubject:
@@ -61,7 +61,7 @@ func (app *application) providerVerify(next http.Handler) http.Handler {
 				return
 			}
 		}
-		r = newRequest
+
 		username := r.Context().Value(usernameContextKey)
 
 		app.log.Info(fmt.Sprintf("username after helper function call success without errors: %s", username))

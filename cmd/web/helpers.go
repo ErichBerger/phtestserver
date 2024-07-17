@@ -101,7 +101,7 @@ func (app *application) validateProvider(r *http.Request) (*http.Request, error)
 
 	c, err := r.Cookie("token")
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 
 	tkn, err := jwt.ParseWithClaims(c.Value, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -114,31 +114,30 @@ func (app *application) validateProvider(r *http.Request) (*http.Request, error)
 	})
 
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 
 	if !tkn.Valid {
-		return nil, jwt.ErrInvalidKey
+		return r, jwt.ErrInvalidKey
 	}
 
 	username, err := tkn.Claims.GetSubject()
 
 	if err != nil {
-		return nil, jwt.ErrTokenInvalidSubject
+		return r, jwt.ErrTokenInvalidSubject
 	}
 
 	app.log.Info(fmt.Sprintf("Username after helper function: %s", username))
-	r = r.Clone(context.WithValue(r.Context(), usernameContextKey, username))
+	return r.Clone(context.WithValue(r.Context(), usernameContextKey, username)), nil
 
-	return r, nil
 }
 
 func (app *application) getTemplateData(r *http.Request) data {
 
-	_, ok := r.Context().Value(usernameContextKey).(string)
+	username, ok := r.Context().Value(usernameContextKey).(string)
 
+	app.log.Info("Username from context in getTemplateData", "username", username)
 	if !ok {
-		app.log.Info("username not logged in context")
 		return data{IsLoggedIn: false}
 	}
 	return data{IsLoggedIn: true}
