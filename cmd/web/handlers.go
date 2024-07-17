@@ -50,13 +50,13 @@ func (app *application) noteAdmin(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) notesHandler(w http.ResponseWriter, r *http.Request) {
 
-	username := r.Context().Value("username")
+	username, ok := r.Context().Value(usernameContextKey).(string)
 
-	if username == nil {
+	if !ok {
 		app.serverError(w, r, fmt.Errorf("no username stored in context"))
 		return
 	}
-	notes, err := app.notes.GetNotesByProvider(username.(string))
+	notes, err := app.notes.GetNotesByProvider(username)
 
 	if err != nil {
 		app.serverError(w, r, err)
@@ -95,6 +95,23 @@ func (app *application) noteHandler(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 
 	data.Note = note
+	username, ok := r.Context().Value(usernameContextKey).(string)
+
+	if !ok {
+		app.serverError(w, r, fmt.Errorf("couldn't parse username from context"))
+		return
+	}
+
+	providerID, err := app.users.GetID(username)
+
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	if note.ID != providerID {
+		app.clientError(w, http.StatusForbidden)
+		return
+	}
 
 	app.render(w, r, http.StatusOK, "note.html", data)
 }
