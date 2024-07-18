@@ -57,5 +57,6 @@ func (app *application) postLogin(w http.ResponseWriter, r *http.Request) {
 		Expires: expirationTime,
 	})
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/notes", http.StatusSeeOther)
+
 }
