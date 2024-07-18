@@ -31,7 +31,7 @@ func main() {
 	}
 
 	dsn := getDSN()
-
+	println(dsn)
 	db, err := models.NewDB(dsn)
 
 	if err != nil {

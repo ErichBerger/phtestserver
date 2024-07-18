@@ -23,6 +23,9 @@ func getDSN() string {
 	dbuser := os.Getenv("DBUSER")
 	dbpassword := os.Getenv("DBPASSWORD")
 
+	if dbuser == "" || dbname == "" || dbpassword == "" {
+		return "phadmin:teambadass@/phtestserver?parseTime=true"
+	}
 	var sb strings.Builder
 
 	sb.WriteString(dbuser)

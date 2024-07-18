@@ -174,14 +174,14 @@ func (app *application) addNotePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get username from context
-	provider := r.Context().Value("username")
+	provider, ok := r.Context().Value(usernameContextKey).(string)
 
-	if provider == nil {
+	if !ok {
 		app.serverError(w, r, fmt.Errorf("failed to parse provider from context"))
 		return
 	}
 
-	providerID, err := app.users.GetID(provider.(string))
+	providerID, err := app.users.GetID(provider)
 
 	if err != nil {
 		app.serverError(w, r, err)
