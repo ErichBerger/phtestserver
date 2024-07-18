@@ -29,7 +29,8 @@ func main() {
 		log.Warn(err.Error())
 		os.Exit(1)
 	}
-	dsn := "phadmin:teambadass@/phtestserver?parseTime=true"
+
+	dsn := getDSN()
 
 	db, err := models.NewDB(dsn)
 

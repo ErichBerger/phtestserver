@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -16,6 +17,23 @@ type contextKey string
 
 const usernameContextKey = contextKey("username")
 
+func getDSN() string {
+
+	dbname := os.Getenv("DB")
+	dbuser := os.Getenv("DBUSER")
+	dbpassword := os.Getenv("DBPASSWORD")
+
+	var sb strings.Builder
+
+	sb.WriteString(dbuser)
+	sb.WriteString(":")
+	sb.WriteString(dbpassword)
+	sb.WriteString("@/")
+	sb.WriteString(dbname)
+	sb.WriteString("?parseTime=true")
+
+	return sb.String()
+}
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
 	method := r.Method
 	uri := r.URL.RequestURI()
@@ -134,9 +152,8 @@ func (app *application) validateProvider(r *http.Request) (*http.Request, error)
 
 func (app *application) getTemplateData(r *http.Request) data {
 
-	username, ok := r.Context().Value(usernameContextKey).(string)
+	_, ok := r.Context().Value(usernameContextKey).(string)
 
-	app.log.Info("Username from context in getTemplateData", "username", username)
 	if !ok {
 		return data{IsLoggedIn: false}
 	}
