@@ -1,8 +1,8 @@
 drop database if exists test;
 
-create database test;
+create database phtestserver;
 
-use test;
+use phtestserver;
 
 create table User (
     id int auto_increment,
@@ -35,6 +35,6 @@ create table Note (
 insert into User (username, hashedPassword, fname, lname) values ("test", "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm", "Bob", "Dobson");
 insert into User (username, hashedPassword, fname, lname) values ("test2", "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm", "Jenny", "Smith");
 
-create user 'test'@'localhost' identified by 'password';
+create user 'phadmin'@'localhost' identified by 'teambadass';
 
-grant update, insert, select, delete on test.* to 'test'@'localhost';
+grant update, insert, select, delete on phtestserver.* to 'phadmin'@'localhost';
