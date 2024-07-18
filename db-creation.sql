@@ -33,6 +33,7 @@ create table Note (
 );
 
 insert into User (username, hashedPassword, fname, lname) values ("test", "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm", "Bob", "Dobson");
+insert into User (username, hashedPassword, fname, lname) values ("test2", "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm", "Jenny", "Smith");
 
 create user 'test'@'localhost' identified by 'password';
 
