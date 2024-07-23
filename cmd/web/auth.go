@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// TODO: use a env variable to get this from the system
 var (
 	jwtKey = []byte("secret-key")
 )

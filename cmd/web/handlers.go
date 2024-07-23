@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (app *application) mainHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	r, _ = app.validateProvider(r)
 
 	data := app.getTemplateData(r)
@@ -36,21 +36,16 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func (app *application) progressnoteHandler(w http.ResponseWriter, r *http.Request) {
-	data := app.getTemplateData(r)
-	app.render(w, r, http.StatusOK, "progressnote.html", data)
-}
-
-func (app *application) notesAdmin(w http.ResponseWriter, r *http.Request) {
+func (app *application) getAdminNotesView(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 	app.render(w, r, http.StatusOK, "notes-admin.html", data)
 }
-func (app *application) noteAdmin(w http.ResponseWriter, r *http.Request) {
+func (app *application) getAdminNoteView(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 	app.render(w, r, http.StatusOK, "note-admin.html", data)
 }
 
-func (app *application) notesHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) getNotesView(w http.ResponseWriter, r *http.Request) {
 
 	username, ok := r.Context().Value(usernameContextKey).(string)
 
@@ -72,7 +67,7 @@ func (app *application) notesHandler(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, http.StatusOK, "notes.html", data)
 }
 
-func (app *application) noteHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) getNoteView(w http.ResponseWriter, r *http.Request) {
 	// We're assuming we've already checked if they have appropriate authorization
 	// For now we're passing a dummy variable
 
@@ -114,7 +109,7 @@ func (app *application) noteHandler(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, http.StatusOK, "note.html", data)
 }
 
-func (app *application) addNotePost(w http.ResponseWriter, r *http.Request) {
+func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 
@@ -195,13 +190,13 @@ func (app *application) addNotePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/note/%d", newID), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/note/view/%d", newID), http.StatusSeeOther)
 
 	// upon successful entry, redirect to new note view
 
 }
 
-func (app *application) addNoteGet(w http.ResponseWriter, r *http.Request) {
+func (app *application) getNoteCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 
 	username := r.Context().Value("username")
@@ -213,11 +208,4 @@ func (app *application) addNoteGet(w http.ResponseWriter, r *http.Request) {
 	app.log.Info(fmt.Sprintf("username: %s", username))
 
 	app.render(w, r, http.StatusOK, "add-note.html", data)
-}
-
-func (app *application) addNote1(w http.ResponseWriter, r *http.Request) {
-
-	data := app.getTemplateData(r)
-
-	app.render(w, r, http.StatusOK, "add-note-1.html", data)
 }
