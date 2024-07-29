@@ -10,7 +10,7 @@ import (
 type Note struct {
 	ID                     int
 	Provider               string
-	Username               string // Eventually split this into fname and lname, but for now is fine
+	ProviderID             int
 	Patient                string
 	Service                string
 	ServiceDate            time.Time
@@ -38,16 +38,12 @@ func (n *NoteModel) Insert(providerID int,
 	startTime string,
 	endTime string,
 	summary string,
-	progress string,
-	response string,
-	assessmentStatus string,
-	riskFactors string,
-	emergencyInterventions string) (int, error) {
+) (int, error) {
 	statement := `insert into Note 
-	(providerID, patient, service, serviceDate, startTime, endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status)
-	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')`
+	(providerID, patient, service, serviceDate, startTime, endTime, summary)
+	values (?, ?, ?, ?, ?, ?, 'Pending')`
 
-	result, err := n.DB.Exec(statement, providerID, patient, service, serviceDate, startTime, endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions)
+	result, err := n.DB.Exec(statement, providerID, patient, service, serviceDate, startTime, endTime, summary)
 
 	if err != nil {
 		return 0, err
@@ -65,7 +61,7 @@ func (n *NoteModel) Insert(providerID int,
 func (n *NoteModel) Get(id int) (Note, error) {
 	//DB.query to get the note based on the id
 
-	statement := `select Note.id, concat(User.fname, ' ', User.lname), User.username, Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status from Note inner join User on Note.providerID = User.id where Note.id = ?`
+	statement := `select Note.id, concat(User.fname, ' ', User.lname), concat(Patient.firstInitials, ' ', Patient.lastInitials), Note.service, Note.serviceDate, Note.startTime, Note.endTime, Note.summary from Note inner join User on Note.providerID = User.id inner join Patient on Note.patientID = Patient.id where Note.id = ?`
 
 	row := n.DB.QueryRow(statement, id)
 
@@ -73,7 +69,7 @@ func (n *NoteModel) Get(id int) (Note, error) {
 
 	var startString, endString string
 
-	err := row.Scan(&note.ID, &note.Provider, &note.Username, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions, &note.Status)
+	err := row.Scan(&note.ID, &note.Provider, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary)
 
 	if err != nil {
 		return Note{}, err
@@ -101,7 +97,7 @@ func (*NoteModel) CheckExistingNote() (int, error) {
 
 func (n *NoteModel) GetNotesByProvider(username string) ([]Note, error) {
 
-	statement := `select Note.id, concat(User.fname, ' ', User.lname),Note.patient, Note.service, Note.serviceDate, Note.startTime, Note.endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions, status from Note inner join User on Note.providerID = User.id where User.username = ?`
+	statement := `select Note.id, concat(User.fname, ' ', User.lname), User.id, concat(Patient.firstInitials, ' ', Patient.lastInitials), Note.service, Note.serviceDate, Note.startTime, Note.endTime, Note.summary, Note.status from Note inner join User on Note.providerID = User.id inner join Patient on Patient.id = Note.patientID where User.username = ?`
 
 	rows, err := n.DB.Query(statement, username)
 
@@ -117,7 +113,7 @@ func (n *NoteModel) GetNotesByProvider(username string) ([]Note, error) {
 		var note Note
 		var startString, endString string
 
-		err := rows.Scan(&note.ID, &note.Provider, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Progress, &note.Response, &note.AssessmentStatus, &note.RiskFactors, &note.EmergencyInterventions, &note.Status)
+		err := rows.Scan(&note.ID, &note.Provider, &note.ProviderID, &note.Patient, &note.Service, &note.ServiceDate, &startString, &endString, &note.Summary, &note.Status)
 
 		if err != nil {
 			return nil, err

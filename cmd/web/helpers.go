@@ -2,20 +2,13 @@ package main
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 )
-
-type contextKey string
-
-const usernameContextKey = contextKey("username")
 
 func getDSN() string {
 
@@ -43,11 +36,8 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 
 	app.log.Error(err.Error(), "method", method, "uri", uri)
 
-	app.clientError(w, http.StatusInternalServerError)
+	app.clientError(w, r, http.StatusInternalServerError)
 
-}
-func (app *application) clientError(w http.ResponseWriter, status int) {
-	http.Error(w, http.StatusText(status), status)
 }
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, status int, pageName string, data data) {
@@ -72,6 +62,13 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 	w.WriteHeader(status)
 
 	buf.WriteTo(w)
+
+}
+
+func (app *application) clientError(w http.ResponseWriter, r *http.Request, status int) {
+	data := app.getTemplateData(r)
+	data.Error = fmt.Sprintf("%d: %s", status, http.StatusText(status))
+	app.render(w, r, status, "error.html", data)
 
 }
 
@@ -118,47 +115,12 @@ func (app *application) HTMLTimeToGoTime(inputDate string, inputTime string) (ti
 	return time.Date(year, time.Month(month), day, hour, minute, 0, 0, time.UTC), nil
 }
 
-func (app *application) validateProvider(r *http.Request) (*http.Request, error) {
-
-	c, err := r.Cookie("token")
-	if err != nil {
-		return r, err
-	}
-
-	tkn, err := jwt.ParseWithClaims(c.Value, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
-
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, jwt.ErrSignatureInvalid
-		}
-
-		return jwtKey, nil
-	})
-
-	if err != nil {
-		return r, err
-	}
-
-	if !tkn.Valid {
-		return r, jwt.ErrInvalidKey
-	}
-
-	username, err := tkn.Claims.GetSubject()
-
-	if err != nil {
-		return r, jwt.ErrTokenInvalidSubject
-	}
-
-	app.log.Info(fmt.Sprintf("Username after helper function: %s", username))
-	return r.Clone(context.WithValue(r.Context(), usernameContextKey, username)), nil
-
-}
-
 func (app *application) getTemplateData(r *http.Request) data {
 
-	_, ok := r.Context().Value(usernameContextKey).(string)
+	authLevel, ok := r.Context().Value(authLevelContextKey).(int)
 
 	if !ok {
-		return data{IsLoggedIn: false}
+		return data{AuthLevel: 0}
 	}
-	return data{IsLoggedIn: true}
+	return data{AuthLevel: authLevel}
 }

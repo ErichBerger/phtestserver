@@ -8,11 +8,14 @@ import (
 )
 
 type data struct {
-	Note       models.Note
-	Notes      []models.Note
-	User       models.User
-	Form       any
-	IsLoggedIn bool
+	Note      models.Note
+	Notes     []models.Note
+	User      models.User
+	Users     []models.User
+	Form      any
+	AuthLevel int
+	Error     string
+	Errors    map[string]string
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {

@@ -1,11 +1,21 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v5"
 )
+
+type contextKey string
+
+const usernameContextKey = contextKey("username")
+
+const authLevelContextKey = contextKey("authLevel")
+
+const authLevelProvider = 1
+const authLevelAdmin = 2
 
 func commonHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -46,25 +56,87 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
-
-func (app *application) providerVerify(next http.Handler) http.Handler {
+func (app *application) registerAuthorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		r, err := app.validateProvider(r)
+		c, err := r.Cookie("token")
 		if err != nil {
-			switch err {
-			case http.ErrNoCookie, jwt.ErrInvalidKey, jwt.ErrSignatureInvalid, jwt.ErrTokenInvalidSubject:
-				app.clientError(w, http.StatusUnauthorized)
-				return
-			default:
-				app.serverError(w, r, err)
-				return
+			app.clientError(w, r, http.StatusForbidden) // Change to redirect, but make that better
+			return
+		}
+		// Customer claims struct here?
+		tkn, err := jwt.ParseWithClaims(c.Value, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, jwt.ErrSignatureInvalid
 			}
+
+			return jwtKey, nil
+		})
+
+		if err != nil {
+			app.clientError(w, r, http.StatusForbidden)
+			return
 		}
 
-		username := r.Context().Value(usernameContextKey)
+		if !tkn.Valid {
+			app.clientError(w, r, http.StatusForbidden)
+			return
+		}
 
-		app.log.Info(fmt.Sprintf("username after helper function call success without errors: %s", username))
+		claims, ok := tkn.Claims.(*CustomClaims)
+
+		if !ok {
+			app.serverError(w, r, fmt.Errorf("couldn't convert token claims field to CustomClaims type"))
+			return
+		}
+
+		//
+		username := claims.Username
+		authLevel := claims.AuthLevel
+		ctx := r.Context()
+
+		ctx = context.WithValue(ctx, usernameContextKey, username)
+		ctx = context.WithValue(ctx, authLevelContextKey, authLevel)
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(w, r)
+
+	})
+}
+
+func (app *application) requireProvider(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authLevel, ok := r.Context().Value(authLevelContextKey).(int)
+
+		if !ok {
+			app.clientError(w, r, http.StatusForbidden)
+			return
+		}
+
+		if authLevel < authLevelProvider {
+			app.clientError(w, r, http.StatusForbidden)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (app *application) requireAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authLevel, ok := r.Context().Value(authLevelContextKey).(int)
+
+		if !ok {
+			app.clientError(w, r, http.StatusForbidden)
+			return
+		}
+
+		if authLevel < authLevelProvider {
+			app.clientError(w, r, http.StatusForbidden)
+			return
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }

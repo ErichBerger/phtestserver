@@ -1,12 +1,26 @@
 {{define "nav"}}
-{{if .IsLoggedIn }}
+
+
+{{if (eq .AuthLevel 2) }}
+<nav>
+  <ul>
+    <a class='{{block "notes" .}}{{end}}' href="/admin/notes/view"><li>Dashboard</li></a>
+    <a class='{{block "add-note" .}}{{end}}' href="note/create"><li>Add Note</li></a>
+    <a class='{{block "users" .}}{{end}}' href="/admin/users/view"><li>Manage Users</li></a>
+  </ul> 
+</nav>
+{{end}}
+
+{{if (eq .AuthLevel 1)}}
 <nav>
   <ul>
     <a class='{{block "notes" .}}{{end}}' href="/notes/view"><li>Dashboard</li></a>
     <a class='{{block "add-note" .}}{{end}}' href="/note/create"><li>Add Note</li></a>
   </ul> 
 </nav>
+
 {{else}}
+
 <nav>
   <ul>
     <a class='{{block "home" .}}{{end}}' href="/"><li>Home</li></a>
@@ -15,3 +29,4 @@
 </nav>
 {{end}}
 {{end}}
+

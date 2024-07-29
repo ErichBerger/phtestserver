@@ -10,36 +10,40 @@ import (
 	"time"
 )
 
-func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	r, _ = app.validateProvider(r)
+func (app *application) home() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-	data := app.getTemplateData(r)
-	app.render(w, r, http.StatusOK, "home.html", data)
+		data := app.getTemplateData(r)
+		app.render(w, r, http.StatusOK, "home.html", data)
+
+	})
 }
 
 func (app *application) getLogin(w http.ResponseWriter, r *http.Request) {
-	r, _ = app.validateProvider(r)
 	data := app.getTemplateData(r)
 	app.render(w, r, http.StatusOK, "login.html", data)
 }
+
 func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("token")
 
 	if errors.Is(err, http.ErrNoCookie) {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
 	}
 
 	c.Expires = time.Now()
 
 	// Override token cookie
 	http.SetCookie(w, c)
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
 func (app *application) getAdminNotesView(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 	app.render(w, r, http.StatusOK, "notes-admin.html", data)
 }
+
 func (app *application) getAdminNoteView(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 	app.render(w, r, http.StatusOK, "note-admin.html", data)
@@ -82,7 +86,7 @@ func (app *application) getNoteView(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			app.clientError(w, http.StatusBadRequest)
+			app.clientError(w, r, http.StatusBadRequest)
 			return
 		}
 		app.serverError(w, r, err)
@@ -92,20 +96,27 @@ func (app *application) getNoteView(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 
 	data.Note = note
+	/* TODO: reinstate code, but it's not recognizing the user with the note
 	username, ok := r.Context().Value(usernameContextKey).(string)
-
-	app.log.Info("Username from context in noteHandler", "username", username)
 
 	if !ok {
 		app.serverError(w, r, fmt.Errorf("couldn't parse username from context"))
 		return
 	}
 
-	if data.Note.Username != username {
-		app.clientError(w, http.StatusForbidden)
+
+	providerID, err := app.users.GetID(username)
+
+	if err != nil {
+		app.serverError(w, r, err)
 		return
 	}
 
+		if data.Note.ProviderID != providerID {
+			app.clientError(w, r, http.StatusForbidden)
+			return
+		}
+	*/
 	app.render(w, r, http.StatusOK, "note.html", data)
 }
 
@@ -143,31 +154,6 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, fmt.Errorf("summary field not submitted"))
 	}
 
-	progress := r.PostForm.Get("progress")
-	if strings.TrimSpace(progress) == "" {
-		app.serverError(w, r, fmt.Errorf("progress field not submitted"))
-	}
-
-	response := r.PostForm.Get("response")
-	if strings.TrimSpace(response) == "" {
-		app.serverError(w, r, fmt.Errorf("response field not submitted"))
-	}
-
-	assessmentStatus := r.PostForm.Get("assessmentStatus")
-	if strings.TrimSpace(assessmentStatus) == "" {
-		app.serverError(w, r, fmt.Errorf("assessmentStatus field not submitted"))
-	}
-
-	riskFactors := r.PostForm.Get("riskFactors")
-	if strings.TrimSpace(riskFactors) == "" {
-		app.serverError(w, r, fmt.Errorf("riskFactors field not submitted"))
-	}
-
-	emergencyInterventions := r.PostForm.Get("emergencyInterventions")
-	if strings.TrimSpace(emergencyInterventions) == "" {
-		app.serverError(w, r, fmt.Errorf("emergencyInterventions field not submitted"))
-	}
-
 	// Get username from context
 	provider, ok := r.Context().Value(usernameContextKey).(string)
 
@@ -183,7 +169,7 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newID, err := app.notes.Insert(providerID, patient, service, serviceDate, startTime, endTime, summary, progress, response, assessmentStatus, riskFactors, emergencyInterventions)
+	newID, err := app.notes.Insert(providerID, patient, service, serviceDate, startTime, endTime, summary)
 
 	if err != nil {
 		app.serverError(w, r, err)

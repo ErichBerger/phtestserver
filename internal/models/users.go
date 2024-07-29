@@ -8,34 +8,39 @@ import (
 )
 
 type User struct {
-	username string
-	password string
+	username  string
+	password  string
+	authLevel int
+	npiNumber int
 }
 
 type UserModel struct {
 	DB *sql.DB
 }
 
-func (u *UserModel) ValidateProvider(username string, password string) error {
-	statement := `select hashedPassword from User where username = ?`
+func (u *UserModel) Validate(username string, password string) (int, error) {
+	statement := `select hashedPassword, authLevel from User where username = ?`
 
 	row := u.DB.QueryRow(statement, username)
 
-	var hashedPassword string
+	var (
+		hashedPassword string
+		authLevel      int
+	)
 
-	err := row.Scan(&hashedPassword)
+	err := row.Scan(&hashedPassword, &authLevel)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return authLevel, nil
 }
 
 func (u *UserModel) GetID(username string) (int, error) {
@@ -67,9 +72,4 @@ func (u *UserModel) GetName(id int) (string, error) {
 	}
 
 	return fmt.Sprintf("%s %s", fname, lname), nil
-}
-
-func (*UserModel) ValidateAdmin() (bool, error) {
-
-	return true, nil
 }
