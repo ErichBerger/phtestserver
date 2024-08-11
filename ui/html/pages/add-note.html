@@ -27,22 +27,22 @@
     <div class="initial">
         <label for="serviceDate">Date of Service:</label> 
         {{with $.Errors.ServiceDate}} <div class="error">{{.}} </div>{{end}}
-        <input type="date" id="servicedate" name="serviceDate" {{with.ServiceDate}}value="{{.}}"{{end}}> 
+        <input type="date" id="servicedate" name="serviceDate" {{with .ServiceDate}}value="{{.}}"{{end}}> 
     </div>
     <div class="initial">
         <label for="startTime">Session Start Time:</label> 
         {{with $.Errors.StartTime}} <div class="error">{{.}} </div>{{end}}
-        <input type="time" id="startTime" name="startTime"> 
+        <input type="time" id="startTime" name="startTime" {{with .StartTime}}value="{{.}}"{{end}}> 
     </div>
     <div class="initial">
         <label for="endTime">Session End Time:</label> 
         {{with $.Errors.EndTime}} <div class="error">{{.}} </div>{{end}}
-        <input type="time" id="endTime" name="endTime"> 
+        <input type="time" id="endTime" name="endTime" {{with .EndTime}}value="{{.}}"{{end}}> 
     </div>
     <div class="text">
         <label for="summary">Summary of Treatment</label>
         {{with $.Errors.Summary}} <div class="error">{{.}} </div>{{end}}
-        <textarea id="summary" name="summary" cols="55" rows="4"></textarea>
+        <textarea id="summary" name="summary" cols="55" rows="4" {{with .Summary}}value="{{.}}"{{end}}></textarea>
     </div>
     <div class="bnbuttons">
         <div></div>

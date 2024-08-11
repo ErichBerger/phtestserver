@@ -143,7 +143,7 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	form := NoteCreateForm{}
-
+	// Decode post form into struct
 	err = decoder.Decode(&form, r.PostForm)
 
 	if err != nil {
@@ -151,60 +151,28 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	errors := map[string]string{}
-	// Get patientID from initials
-	// NOTE: doing it this way to prevent storage of patient id
-	patient := r.PostForm.Get("patient")
-	if strings.TrimSpace(patient) == "none" || strings.TrimSpace(patient) == "" {
+	if form.Patient == "none" {
 		errors["Patient"] = "Select a patient"
 	}
 
-	form.Patient = patient
-
-	patientInitials := strings.Split(patient, " ")
-
-	patientFirst := patientInitials[0]
-
-	patientLast := patientInitials[1]
-
-	patientID, err := app.patients.GetID(patientFirst, patientLast)
-
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-	// Get service type
-	service := r.PostForm.Get("service")
-	if strings.TrimSpace(service) == "none" || strings.TrimSpace(service) == "" {
+	if form.Service == "none" {
 		errors["Service"] = "Select a service"
 	}
 
-	form.Service = service
-	// Get service date
-	serviceDate := r.PostForm.Get("serviceDate")
-	if strings.TrimSpace(serviceDate) == "" {
-		errors["ServiceDate"] = "Enter a valid date"
+	if form.StartTime == "" {
+		errors["StartTime"] = "Enter a valid start time"
 	}
-	form.ServiceDate = serviceDate
-	// Get start time
-	startTime := r.PostForm.Get("startTime")
-	if strings.TrimSpace(startTime) == "" {
-		errors["StartTime"] = "Enter a start time"
-	}
-	form.StartTime = startTime
-
-	endTime := r.PostForm.Get("endTime")
-	if strings.TrimSpace(endTime) == "" {
-		errors["EndTime"] = "Enter an end time"
+	if form.EndTime == "" {
+		errors["EndTime"] = "Enter a valid end time"
 	}
 
-	form.EndTime = endTime
-
-	summary := r.PostForm.Get("summary")
-	if strings.TrimSpace(summary) == "" {
-		errors["Summary"] = "Enter a summary"
+	if form.Summary == "" {
+		errors["Summary"] = "Summary cannot be blank"
 	}
+	// Get patientID from initials
+	// NOTE: doing it this way to prevent storage of patient id
 
-	form.Summary = summary
+	// Get service type
 
 	if len(errors) != 0 {
 		fmt.Printf("Number of errors: %d\n", len(errors))
@@ -234,7 +202,21 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get username from context
+	var patientID int
+	if form.Patient != "" {
+
+		patientInitials := strings.Split(form.Patient, " ")
+
+		patientFirst := patientInitials[0]
+
+		patientLast := patientInitials[1]
+
+		patientID, err = app.patients.GetID(patientFirst, patientLast)
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+	}
 	provider, ok := r.Context().Value(usernameContextKey).(string)
 
 	if !ok {
@@ -249,7 +231,7 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newID, err := app.notes.Insert(providerID, patientID, service, serviceDate, startTime, endTime, summary)
+	newID, err := app.notes.Insert(providerID, patientID, form.Service, form.ServiceDate, form.StartTime, form.EndTime, form.Summary)
 
 	if err != nil {
 		app.serverError(w, r, err)
@@ -303,7 +285,12 @@ func (app *application) getNoteCreate(w http.ResponseWriter, r *http.Request) {
 		"group":      "Group",
 	}
 	form.Service = "none"
-	// Convert patients into form form
+
+	form.ServiceDate = time.Now().Format("2006-01-02")
+
+	form.StartTime = time.Now().Format("15:04:05")
+	form.EndTime = time.Now().Format("15:04:05")
+
 	data.Form = form
 
 	app.render(w, r, http.StatusOK, "add-note.html", data)
