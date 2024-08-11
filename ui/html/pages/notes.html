@@ -41,7 +41,6 @@
     <table class="notes-notes" id="myTable">
         <thead>
             <tr class="header">
-                <th>Note ID</th>
                 <th>Date</th>
                 <th>Patient</th>
                 <th>Service</th>
@@ -51,11 +50,10 @@
         <tbody>
             {{range .Notes}}
             <tr>
-                <td><a class="noteid" href="/note/view/{{.ID}}">{{.ID}}</a></td>
-                <td>{{.ServiceDate.Format "01/02/2006"}}</td> 
-                <td>{{.Patient}}</td>
-                <td>{{.Service}}</td>
-                <td>{{.Status}}</td>
+                <td><a class="notelink" href="/note/view/{{.ID}}">{{.ServiceDate.Format "01/02/2006"}}</a></td> 
+                <td><a class="notelink" href="/note/view/{{.ID}}">{{.PatientFirstInitials}} {{.PatientLastInitials}}</a></td>
+                <td><a class="notelink" href="/note/view/{{.ID}}">{{.Service}}</a></td>
+                <td><a class="notelink" href="/note/view/{{.ID}}">{{.Status}}</a></td>
             </tr>
             {{end}}
         </tbody>

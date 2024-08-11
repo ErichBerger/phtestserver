@@ -2,14 +2,25 @@
 {{define "add-note"}}highlighted{{end}}
 {{define "main"}}
 <h3>Create Note</h3>
+{{with .Form}}
 <form class="progressnote" id="progressnote" action="/note/create" method="post">
     <div class="initial">
         <label for="patient">Select Patient:</label>
-        <input type="text" name="patient" id="patient">
+        <select name="patient" id="patient">
+            <option value="none"></option>
+            {{range .Patients}}
+            <option value="{{ . }}" {{if (eq . $.Form.Patient)}}selected{{end}}>{{ . }}</option>    
+            {{end}}
+        </select>
     </div> 
     <div class="initial">
-        <label for="service">Type of Service:</label> 
-        <input type="text" id="service" name="service">
+        <label for="service">Type of Service:</label>
+        <select name ="service" id="service">
+            <option value="none"></option>
+            {{range $key, $value := .Services}}
+            <option value="{{$key}}" {{if (eq $value $.Form.Service)}}selected{{end}}>{{$value}}</option>
+            {{end}}
+        </select> 
     </div>
     <div class="initial">
         <label for="serviceDate">Date of Service:</label> 
@@ -32,4 +43,5 @@
         <button form="progressnote" type="submit">Submit</button>
     </div>
 </form>
+{{end}}
 {{end}}

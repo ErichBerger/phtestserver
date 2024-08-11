@@ -116,11 +116,13 @@ func (app *application) HTMLTimeToGoTime(inputDate string, inputTime string) (ti
 }
 
 func (app *application) getTemplateData(r *http.Request) data {
-
+	data := data{}
 	authLevel, ok := r.Context().Value(authLevelContextKey).(int)
 
 	if !ok {
-		return data{AuthLevel: 0}
+		data.AuthLevel = 0
 	}
-	return data{AuthLevel: authLevel}
+	data.AuthLevel = authLevel
+
+	return data
 }

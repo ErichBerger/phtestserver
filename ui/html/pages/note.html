@@ -9,10 +9,10 @@
                 </li>
 
                 <li>
-                    <b>Patient: </b> {{.Note.Patient}}
+                    <b>Patient: </b> {{.Note.PatientFirstInitials}} {{.Note.PatientLastInitials}}
                 </li>
                 <li>
-                    <b>Provider: </b> {{.Note.Provider}}
+                    <b>Provider: </b> {{.Note.ProviderName}}
                 </li>
                 <li>
                     <b>Service: </b> {{.Note.Service}}
@@ -31,6 +31,7 @@
                 <button>Approve</button>
                 <button>Deny</button>
                 {{end}}
+                <a class="button" href="/notes/view">Back</a>
             </ul>
             <div class="note-note">
                 <p>
@@ -40,7 +41,6 @@
 
                
             </ul>
-            <button type="submit" action="/notes/view" method="get">Back</button>
         </div>
         {{end}}
 {{end}}

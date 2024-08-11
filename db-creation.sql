@@ -1,4 +1,4 @@
-drop database if exists test;
+drop database if exists phtestserver;
 
 create database phtestserver;
 
@@ -57,6 +57,7 @@ ALTER TABLE `PatientDiagnosisCode` ADD FOREIGN KEY (`patientID`) REFERENCES `Pat
 insert into User (username, hashedPassword, fname, lname, authLevel) values ("test", "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm", "Bob", "Dobson", 1);
 insert into User (username, hashedPassword, fname, lname, authLevel) values ("test2", "$2y$10$X8XV2SPQ4sVyYqCXpmTTlucH3QLqm7lStxkY4jjQQxuj5yV8WfMzm", "Jenny", "Smith", 2);
 
+insert into Patient (firstInitials, lastInitials) values ("ER", "BE"), ("ZO", "KH"), ("MA", "BL"), ("MO", "AL");
 create user 'phadmin'@'localhost' identified by 'teambadass';
 
 grant update, insert, select, delete on phtestserver.* to 'phadmin'@'localhost';

@@ -120,15 +120,38 @@ func (app *application) getNoteView(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, http.StatusOK, "note.html", data)
 }
 
+type NoteCreateForm struct {
+	Patient     string
+	Patients    []string
+	Service     string
+	Services    map[string]string
+	ServiceDate string
+	StartTime   string
+	EndTime     string
+	Summary     string
+}
+
 func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
-
+	// Get patientID from initials
+	// NOTE: doing it this way to prevent storage of patient id
 	patient := r.PostForm.Get("patient")
 	if strings.TrimSpace(patient) == "" {
 		app.serverError(w, r, fmt.Errorf("patient field not submitted"))
 	}
 
+	patientInitials := strings.Split(patient, " ")
+
+	patientFirst := patientInitials[0]
+
+	patientLast := patientInitials[1]
+
+	patientID, err := app.patients.GetID(patientFirst, patientLast)
+
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 	service := r.PostForm.Get("service")
 	if strings.TrimSpace(service) == "" {
 		app.serverError(w, r, fmt.Errorf("service field not submitted"))
@@ -169,7 +192,7 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newID, err := app.notes.Insert(providerID, patient, service, serviceDate, startTime, endTime, summary)
+	newID, err := app.notes.Insert(providerID, patientID, service, serviceDate, startTime, endTime, summary)
 
 	if err != nil {
 		app.serverError(w, r, err)
@@ -185,13 +208,46 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 func (app *application) getNoteCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 
-	username := r.Context().Value("username")
+	/* Not sure why I had this orignally, maybe keep it around just in case
+	username, ok := r.Context().Value("username").(string)
 
-	if username == nil {
-		app.log.Error("No context with username provided.")
+	if !ok {
+		app.serverError(w, r, fmt.Errorf("error parsing username from context"))
 	}
 
-	app.log.Info(fmt.Sprintf("username: %s", username))
+	userID, err := app.users.GetID(username)
+
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+
+	*/
+	form := NoteCreateForm{}
+
+	// Get list of patients
+	patients, err := app.patients.GetAll()
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	form.Patients = make([]string, 0)
+
+	// Store their initials as a string and add to form data
+	for _, patient := range patients {
+		b := strings.Builder{}
+		fmt.Fprintf(&b, "%s %s", patient.FirstInitials, patient.LastInitials)
+		form.Patients = append(form.Patients, b.String())
+	}
+	form.Patient = "none"
+	form.Services = map[string]string{
+		"general":    "General",
+		"individual": "Individual",
+		"family":     "Family",
+		"group":      "Group",
+	}
+	form.Service = "none"
+	// Convert patients into form form
+	data.Form = form
 
 	app.render(w, r, http.StatusOK, "add-note.html", data)
 }

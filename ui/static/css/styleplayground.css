@@ -123,7 +123,8 @@ input[type="submit"],
 textarea,
 select,
 input:not([type="checkbox"]),
-a.logout {
+a.logout,
+a.button {
     font: inherit;
     letter-spacing: inherit;
     word-spacing: inherit;
@@ -136,7 +137,8 @@ a.logout {
 }
 
 button,
-input[type="submit"] {
+input[type="submit"],
+a.button {
     cursor: grab;
     background-color: var(--primary);
     border-color: var(--primary);
@@ -147,7 +149,8 @@ button:hover,
 input[type="submit"]:hover,
 .backbutton,
 .alt-button,
-a.logout {
+a.logout,
+a.button.hover {
     cursor: grab;
     background-color: var(--background);
     border-color: var(--primary);
@@ -162,24 +165,22 @@ a.logout:hover {
     color: var(--background);
 }
 
-a.logout, a.noteid {
+a.logout {
     text-decoration: none;
 }
 
-a.noteid {
+a.notelink {
     color: var(--text);
-    text-decoration-color: var(--text);
-    text-decoration-line: underline;
-    display:inline-block;
+    text-decoration: none;
     width: 100%;
 }
-
+/*
 a.noteid:hover {
     color: var(--primary);
     text-decoration-color: var(--primary);
     cursor: grab;
 }
-
+*/
 /* FOOTER STYLING */
 
 footer {

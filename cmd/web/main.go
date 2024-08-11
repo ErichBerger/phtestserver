@@ -17,6 +17,7 @@ type application struct {
 	log           *slog.Logger
 	users         *models.UserModel
 	notes         *models.NoteModel
+	patients      *models.PatientModel
 }
 
 func main() {
@@ -48,6 +49,7 @@ func main() {
 		log:           log,
 		users:         &models.UserModel{DB: db},
 		notes:         &models.NoteModel{DB: db},
+		patients:      &models.PatientModel{DB: db},
 	}
 
 	tlsConfig := &tls.Config{

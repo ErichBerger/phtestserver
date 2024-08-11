@@ -12,6 +12,8 @@ type data struct {
 	Notes     []models.Note
 	User      models.User
 	Users     []models.User
+	Patient   models.Patient
+	Patients  []models.Patient
 	Form      any
 	AuthLevel int
 	Error     string
