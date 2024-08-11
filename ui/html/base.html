@@ -16,7 +16,9 @@
   <body>
     <header>
       {{template "nav" .}}
+      {{if (gt .AuthLevel 0)}}
       <a class="logout" href="/logout">Logout</a>
+      {{end}}
     </header>
     <main>
         {{template "main" .}}

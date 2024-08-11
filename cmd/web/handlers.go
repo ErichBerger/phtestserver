@@ -8,7 +8,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/schema"
 )
+
+var decoder = schema.NewDecoder()
 
 func (app *application) home() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -121,25 +125,40 @@ func (app *application) getNoteView(w http.ResponseWriter, r *http.Request) {
 }
 
 type NoteCreateForm struct {
-	Patient     string
-	Patients    []string
-	Service     string
-	Services    map[string]string
-	ServiceDate string
-	StartTime   string
-	EndTime     string
-	Summary     string
+	Patient     string            `schema:"patient"`
+	Patients    []string          `schema:"-"`
+	Service     string            `schema:"service"`
+	Services    map[string]string `schema:"-"`
+	ServiceDate string            `schema:"serviceDate"`
+	StartTime   string            `schema:"startTime"`
+	EndTime     string            `schema:"endTime"`
+	Summary     string            `schema:"summary"`
 }
 
 func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
+	// Parse form
+	err := r.ParseForm()
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	form := NoteCreateForm{}
 
-	r.ParseForm()
+	err = decoder.Decode(&form, r.PostForm)
+
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	errors := map[string]string{}
 	// Get patientID from initials
 	// NOTE: doing it this way to prevent storage of patient id
 	patient := r.PostForm.Get("patient")
-	if strings.TrimSpace(patient) == "" {
-		app.serverError(w, r, fmt.Errorf("patient field not submitted"))
+	if strings.TrimSpace(patient) == "none" || strings.TrimSpace(patient) == "" {
+		errors["Patient"] = "Select a patient"
 	}
+
+	form.Patient = patient
 
 	patientInitials := strings.Split(patient, " ")
 
@@ -151,30 +170,68 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		app.serverError(w, r, err)
+		return
 	}
+	// Get service type
 	service := r.PostForm.Get("service")
-	if strings.TrimSpace(service) == "" {
-		app.serverError(w, r, fmt.Errorf("service field not submitted"))
+	if strings.TrimSpace(service) == "none" || strings.TrimSpace(service) == "" {
+		errors["Service"] = "Select a service"
 	}
 
+	form.Service = service
+	// Get service date
 	serviceDate := r.PostForm.Get("serviceDate")
 	if strings.TrimSpace(serviceDate) == "" {
-		app.serverError(w, r, fmt.Errorf("serviceDate field not submitted"))
+		errors["ServiceDate"] = "Enter a valid date"
 	}
-
+	form.ServiceDate = serviceDate
+	// Get start time
 	startTime := r.PostForm.Get("startTime")
 	if strings.TrimSpace(startTime) == "" {
-		app.serverError(w, r, fmt.Errorf("startTime field not submitted"))
+		errors["StartTime"] = "Enter a start time"
 	}
+	form.StartTime = startTime
 
 	endTime := r.PostForm.Get("endTime")
 	if strings.TrimSpace(endTime) == "" {
-		app.serverError(w, r, fmt.Errorf("endTime field not submitted"))
+		errors["EndTime"] = "Enter an end time"
 	}
+
+	form.EndTime = endTime
 
 	summary := r.PostForm.Get("summary")
 	if strings.TrimSpace(summary) == "" {
-		app.serverError(w, r, fmt.Errorf("summary field not submitted"))
+		errors["Summary"] = "Enter a summary"
+	}
+
+	form.Summary = summary
+
+	if len(errors) != 0 {
+		fmt.Printf("Number of errors: %d\n", len(errors))
+		patients, err := app.patients.GetAll()
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+		form.Patients = make([]string, 0)
+
+		// Store their initials as a string and add to form data
+		for _, patient := range patients {
+			b := strings.Builder{}
+			fmt.Fprintf(&b, "%s %s", patient.FirstInitials, patient.LastInitials)
+			form.Patients = append(form.Patients, b.String())
+		}
+		form.Services = map[string]string{
+			"general":    "General",
+			"individual": "Individual",
+			"family":     "Family",
+			"group":      "Group",
+		}
+		data := app.getTemplateData(r)
+		data.Form = form
+		data.Errors = errors
+		app.render(w, r, http.StatusOK, "add-note.html", data)
+		return
 	}
 
 	// Get username from context
