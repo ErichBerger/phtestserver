@@ -167,10 +167,14 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 		errors["ServiceDate"] = "Enter a date of service"
 	}
 
-	_, err = time.Parse("2006-01-02", form.ServiceDate)
+	date, err := time.Parse("2006-01-02", form.ServiceDate)
 
 	if err != nil {
 		errors["ServiceDate"] = "Enter a date in the form YYYY-MM-DD"
+	}
+
+	if date.After(time.Now()) {
+		errors["ServiceDate"] = "Select a date not in the future"
 	}
 
 	// TIME
@@ -304,8 +308,8 @@ func (app *application) getNoteCreate(w http.ResponseWriter, r *http.Request) {
 
 	form.ServiceDate = time.Now().Format("2006-01-02")
 
-	form.StartTime = time.Now().Format("15:04:05")
-	form.EndTime = time.Now().Format("15:04:05")
+	form.StartTime = time.Now().Format("15:04")
+	form.EndTime = time.Now().Format("15:04")
 
 	data.Form = form
 
