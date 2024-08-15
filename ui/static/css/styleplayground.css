@@ -157,7 +157,7 @@ a.button.hover {
     color: var(--primary);
 }
 
-.backbuton:hover,
+.backbutton:hover,
 .alt-button:hover,
 a.logout:hover {
     background-color: var(--primary);
@@ -328,9 +328,10 @@ textarea {
     padding: 0;
 }
 
-.note-row:hover {
-    cursor:grab;
+#status-form {
+    border: none;
 }
+
 
 /* END LAYOUTS */
 .error {

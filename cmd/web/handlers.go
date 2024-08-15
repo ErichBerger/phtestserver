@@ -58,14 +58,15 @@ func (app *application) getAdminNoteView(w http.ResponseWriter, r *http.Request)
 }
 
 func (app *application) getNotesView(w http.ResponseWriter, r *http.Request) {
+	/*
+		username, ok := r.Context().Value(usernameContextKey).(string)
 
-	username, ok := r.Context().Value(usernameContextKey).(string)
-
-	if !ok {
-		app.serverError(w, r, fmt.Errorf("no username stored in context"))
-		return
-	}
-	notes, err := app.notes.GetNotesByProvider(username)
+		if !ok {
+			app.serverError(w, r, fmt.Errorf("no username stored in context"))
+			return
+		}
+	*/
+	notes, err := app.notes.GetNotes()
 
 	if err != nil {
 		app.serverError(w, r, err)
@@ -314,4 +315,38 @@ func (app *application) getNoteCreate(w http.ResponseWriter, r *http.Request) {
 	data.Form = form
 
 	app.render(w, r, http.StatusOK, "add-note.html", data)
+}
+
+func (app *application) postNoteEdit(w http.ResponseWriter, r *http.Request) {
+
+	id, err := strconv.Atoi(r.PathValue("id"))
+
+	if err != nil {
+		app.clientError(w, r, http.StatusBadRequest)
+		return
+	}
+
+	err = r.ParseForm()
+
+	if err != nil {
+		app.clientError(w, r, http.StatusBadRequest)
+		return
+	}
+
+	status := r.PostForm.Get("status")
+
+	if status == "" {
+		app.clientError(w, r, http.StatusBadRequest)
+		return
+	}
+
+	err = app.notes.UpdateStatus(id, status)
+
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/note/view/%d", id), http.StatusSeeOther)
+
 }

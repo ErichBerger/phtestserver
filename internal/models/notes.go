@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 )
 
@@ -93,11 +94,11 @@ func (*NoteModel) CheckExistingNote() (int, error) {
 	return 0, nil
 }
 
-func (n *NoteModel) GetNotesByProvider(username string) ([]Note, error) {
+func (n *NoteModel) GetNotes() ([]Note, error) {
 
-	statement := `select Note.id, User.id, concat(User.fname, ' ', User.lname), Patient.id, Patient.firstInitials, Patient.lastInitials, Note.service, Note.serviceDate, Note.startTime, Note.endTime, Note.summary, Note.status from Note inner join User on Note.providerID = User.id inner join Patient on Patient.id = Note.patientID where User.username = ?`
+	statement := `select Note.id, User.id, concat(User.fname, ' ', User.lname), Patient.id, Patient.firstInitials, Patient.lastInitials, Note.service, Note.serviceDate, Note.startTime, Note.endTime, Note.summary, Note.status from Note inner join User on Note.providerID = User.id inner join Patient on Patient.id = Note.patientID`
 
-	rows, err := n.DB.Query(statement, username)
+	rows, err := n.DB.Query(statement)
 
 	if err != nil {
 		return nil, err
@@ -137,4 +138,26 @@ func (n *NoteModel) GetNotesByProvider(username string) ([]Note, error) {
 	}
 
 	return notes, nil
+}
+
+func (n *NoteModel) UpdateStatus(id int, status string) error {
+	statement := `update Note set Note.status = ? where Note.id = ?`
+
+	result, err := n.DB.Exec(statement, status, id)
+
+	if err != nil {
+		return err
+	}
+
+	count, err := result.RowsAffected()
+
+	if err != nil {
+		return err
+	}
+
+	if count < 1 {
+		return fmt.Errorf("no note found")
+	}
+
+	return nil
 }

@@ -28,10 +28,11 @@
                     <b>Status: </b> {{.Note.Status}}
                 </li>
                 {{if (eq .AuthLevel 2)}}
-                <button>Approve</button>
-                <button>Deny</button>
+                <form id="status-form" action="/note/edit/{{.Note.ID}}" method="post">
+                    <button name="status" type="submit" value="Approved">Approve</button>
+                    <button name ="status" type="submit" value="Denied">Deny</button>
+                </form>
                 {{end}}
-                <a class="button" href="/notes/view">Back</a>
             </ul>
             <div class="note-note">
                 <p>

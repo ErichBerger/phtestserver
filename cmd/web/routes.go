@@ -20,6 +20,7 @@ func (app *application) routes() http.Handler {
 
 	mux.HandleFunc("GET /login", app.getLogin)
 
+	mux.Handle("POST /note/edit/{id}", app.registerAuthorization(app.requireAdmin(http.HandlerFunc(app.postNoteEdit))))
 	// Admin
 	mux.Handle("/admin/notes/view", app.registerAuthorization(app.requireAdmin(http.HandlerFunc(app.getAdminNotesView))))
 
