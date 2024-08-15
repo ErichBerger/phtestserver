@@ -45,18 +45,20 @@
                 <th>Start Time</th>
                 <th>End Time</th>
                 <th>Patient</th>
+                <th>Provider</th>
                 <th>Service</th>
                 <th>Status</th>
             </tr>
         </thead>
         <tbody>
             {{range .Notes}}
-            <tr>
+            <tr >
                 <td><a class="notelink" href="/note/view/{{.ID}}">{{.ServiceDate.Format "01/02/2006"}}</a></td>
-                <td><a class="notelink" href="/note/view/{{.ID}}">{{.StartTime.Format "03:04"}}</a></td>
-                <td><a class="notelink" href="/note/view/{{.ID}}">{{.EndTime.Format "03:04"}}</a></td>
+                <td><a class="notelink" href="/note/view/{{.ID}}">{{.StartTime.Format "15:04"}}</a></td>
+                <td><a class="notelink" href="/note/view/{{.ID}}">{{.EndTime.Format "15:04"}}</a></td>
                  
                 <td><a class="notelink" href="/note/view/{{.ID}}">{{.PatientFirstInitials}} {{.PatientLastInitials}}</a></td>
+                <td><a class="notelink" href="/note/view/{{.ID}}">{{.ProviderName}}</a></td>
                 <td><a class="notelink" href="/note/view/{{.ID}}">{{.Service}}</a></td>
                 <td><a class="notelink" href="/note/view/{{.ID}}">{{.Status}}</a></td>
             </tr>

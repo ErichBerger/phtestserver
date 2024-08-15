@@ -328,6 +328,10 @@ textarea {
     padding: 0;
 }
 
+.note-row:hover {
+    cursor:grab;
+}
+
 /* END LAYOUTS */
 .error {
     color: red;

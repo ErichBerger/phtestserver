@@ -25,6 +25,10 @@ func (app *application) home() http.Handler {
 
 func (app *application) getLogin(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
+
+	if data.AuthLevel > 0 {
+		http.Redirect(w, r, "/notes/view", http.StatusSeeOther)
+	}
 	app.render(w, r, http.StatusOK, "login.html", data)
 }
 
@@ -158,12 +162,38 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 	if form.Service == "none" {
 		errors["Service"] = "Select a service"
 	}
+	// DATE
+	if form.ServiceDate == "" {
+		errors["ServiceDate"] = "Enter a date of service"
+	}
 
+	_, err = time.Parse("2006-01-02", form.ServiceDate)
+
+	if err != nil {
+		errors["ServiceDate"] = "Enter a date in the form YYYY-MM-DD"
+	}
+
+	// TIME
 	if form.StartTime == "" {
 		errors["StartTime"] = "Enter a valid start time"
 	}
 	if form.EndTime == "" {
 		errors["EndTime"] = "Enter a valid end time"
+	}
+
+	end, err := time.Parse("15:04", form.EndTime)
+	if err != nil {
+		errors["EndTime"] = "Please enter a time in the form HH:MM"
+	}
+
+	start, err := time.Parse("15:04", form.StartTime)
+
+	if err != nil {
+		errors["StartTime"] = "Please enter a time in the form HH:MM"
+	}
+
+	if end.Before(start) {
+		errors["EndTime"] = "End time cannot be after start time"
 	}
 
 	if form.Summary == "" {
@@ -247,20 +277,6 @@ func (app *application) postNoteCreate(w http.ResponseWriter, r *http.Request) {
 func (app *application) getNoteCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.getTemplateData(r)
 
-	/* Not sure why I had this orignally, maybe keep it around just in case
-	username, ok := r.Context().Value("username").(string)
-
-	if !ok {
-		app.serverError(w, r, fmt.Errorf("error parsing username from context"))
-	}
-
-	userID, err := app.users.GetID(username)
-
-	if err != nil {
-		app.serverError(w, r, err)
-	}
-
-	*/
 	form := NoteCreateForm{}
 
 	// Get list of patients
