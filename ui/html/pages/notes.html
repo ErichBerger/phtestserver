@@ -95,7 +95,7 @@ function clearFilters() {
 }
 
 function matchingDate(row) {
-    var row_date = row.cells[0].textContent
+    var row_date = row.cells[0].textContent;
     var input_servicedatestart = document.getElementById("servicedatestart").value;
     var input_servicedateend = document.getElementById("servicedateend").value;
     if (input_servicedatestart) {
@@ -111,16 +111,44 @@ function matchingDate(row) {
     return true;
 }
 
-function filterTable() {
-    // Get filter inputs
-    // var input_patientfname = document.getElementById("patientfname").value.toLowerCase();
-    // var input_patientlname = document.getElementById("patientlname").value.toLowerCase();
-    // var input_servicedatestart = document.getElementById("servicedatestart").value;
-    // var input_servicedateend = document.getElementById("servicedateend").value;
+function matchingTime(row) {
+    var row_starttime = row.cells[1].textContent;
+    var row_endtime = row.cells[2].textContent;
     var input_servicetimestart = document.getElementById("servicetimestart").value;
     var input_servicetimeend = document.getElementById("servicetimeend").value;
-    var input_servicetype = document.getElementById("servicetype").value.toLowerCase();
+    if (input_servicetimestart) {
+        if (row_starttime < input_servicetimestart) {        
+            return false;
+        }
+    }
+    if (input_servicetimeend) {
+        if (row_endtime > input_servicetimeend) {        
+            return false;
+        }
+    }
 
+    return true;
+}
+
+function matchingInit(row) {
+    var row_init = row.cells[3].textContent.toLowerCase() || row.cells[3].innerText.toLowerCase();
+    var input_patientinit = document.getElementById("patientinit").value.toLowerCase();
+    if (document.getElementById("patientinit").value != "") {
+        if (!row_init.includes(input_patientinit)) {return false;}
+    }
+    return true;
+}
+
+function matchingService(row) {
+    var row_service = row.cells[5].textContent.toLowerCase() || row.cells[5].innerText.toLowerCase();
+    var input_patientservice = document.getElementById("servicetype").value.toLowerCase();
+    if (document.getElementById("servicetype").value != "") {
+        if (!row_service.includes(input_patientservice)) {return false;}
+    }
+    return true;
+}
+
+function filterTable() {
     // Get the table and its rows
     var table = document.getElementById("myTable");
     var tr = table.getElementsByTagName("tr");
@@ -129,58 +157,8 @@ function filterTable() {
     for (var i = 1; i < tr.length; i++) {
         var row = tr[i];
 
-        // // Get data from each cell of the row
-        // var noteId = row.cells[0].textContent || row.cells[0].innerText;
-        // var patientFName = row.cells[1].textContent || row.cells[1].innerText;
-        // var patientLName = row.cells[2].textContent || row.cells[2].innerText;
-        // var serviceDate = row.cells[3].textContent || row.cells[3].innerText;
-        // var serviceType = row.cells[4].textContent || row.cells[4].innerText;
-        // var startTime = row.cells[5].textContent || row.cells[5].innerText;
-
-        // // Check if the row matches the filter criteria
-        // var patientFNameMatch = patientFName.toLowerCase().includes(input_patientfname);
-        // var patientLNameMatch = patientLName.toLowerCase().includes(input_patientlname);
-        // var serviceTypeMatch = serviceType.toLowerCase().includes(input_servicetype);
-        // var serviceDateMatch = true;
-        // var startTimeMatch = true;
-
-        // // Check date filter
-        // if (input_servicedatestart && input_servicedateend) {
-        //     var serviceDateObj = new Date(serviceDate);
-        //     var startDateObj = new Date(input_servicedatestart);
-        //     var endDateObj = new Date(input_servicedateend);
-        //     serviceDateMatch = serviceDateObj >= startDateObj && serviceDateObj <= endDateObj;
-        // } else if (input_servicedatestart) {
-        //     var serviceDateObj = new Date(serviceDate);
-        //     var startDateObj = new Date(input_servicedatestart);
-        //     serviceDateMatch = serviceDateObj >= startDateObj;
-        // } else if (input_servicedateend) {
-        //     var serviceDateObj = new Date(serviceDate);
-        //     var endDateObj = new Date(input_servicedateend);
-        //     serviceDateMatch = serviceDateObj <= endDateObj;
-        // }
-
-        // // Check time filter
-        // if (input_servicetimestart && input_servicetimeend) {
-        //     var startTimeObj = new Date("01/01/1970 " + startTime);
-        //     var endTimeObj = new Date("01/01/1970 " + row.cells[6].textContent.trim());
-        //     var startTimeInputObj = new Date("01/01/1970 " + input_servicetimestart);
-        //     var endTimeInputObj = new Date("01/01/1970 " + input_servicetimeend);
-        //     startTimeMatch = startTimeObj >= startTimeInputObj && endTimeObj <= endTimeInputObj;
-        // } else if (input_servicetimestart) {
-        //     var startTimeObj = new Date("01/01/1970 " + startTime);
-        //     var startTimeInputObj = new Date("01/01/1970 " + input_servicetimestart);
-        //     startTimeMatch = startTimeObj >= startTimeInputObj;
-        //     var endTimeMatch = true;
-        // } else if (input_servicetimeend) {
-        //     var endTimeObj = new Date("01/01/1970 " + row.cells[6].textContent.trim());
-        //     var endTimeInputObj = new Date("01/01/1970 " + input_servicetimeend);
-        //     startTimeMatch = true;
-        //     var endTimeMatch = endTimeObj <= endTimeInputObj;
-        // }
-
         // Show or hide row based on filter criteria
-        if (matchingDate(row) == true) {
+        if (matchingDate(row) && matchingInit(row) && matchingTime(row) && matchingService(row)) {
             row.style.display = "";
         } else {
             row.style.display = "none";
